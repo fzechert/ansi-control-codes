@@ -12,13 +12,41 @@
 //! In the [ECMA-48 Standard][ecma-48] a convention has been adopted to assist the reader of the Standard.
 //!
 //! Capital letters are used to refer to a specific control function, mode, mode setting, or graphic character in order
-//! to avoid confusion, for example, between the concept `space`, and the character `SPACE`.
+//! to avoid confusion, for example, between the concept "space", and the character `SPACE`.
 //!
 //! As is intended by the [ECMA-48 Standard][ecma-48], this convention and all acronyms of modes, and control functions
 //! are retained in this library, where rust permits.
 //!
 //! A character from the [ASCII table][ascii-table] is represented in the form `xx/yy`, where `xx` represents the column
 //! number `00` to `07` in a 7-bit code table, and `yy` represents the row number `00` to `15`.
+//!
+//! ## Low-Level Control Functions
+//!
+//! The control functions of this library are sorted into several modules. You will find the low-level control functions
+//! in the modules [c0], [c1], [control_sequences], [independent_control_functions], and [control_strings].
+//!
+//! The control functions can be put into normal strings. For example, to ring the bell:
+//!
+//! ```
+//! use ansi::c0::BEL;
+//! print!("{}", BEL);
+//! ```
+//!
+//! Or to move the cursor to line 5, column 13:
+//!
+//! ```
+//! use ansi::control_sequences::CUP;
+//! print!("{}", CUP(Some(5), Some(13)));
+//! ```
+//!
+//! It might be necessary in some circumstances to announce the active set of control sequences before they can be used.
+//! This is possible by invoking one of the announcer sequences.
+//!
+//! ```
+//! use ansi::c1::{ANNOUNCER_SEQUENCE, NEL};
+//! // announce the C1 control function set, then move to the next line.
+//! print!("{}{}", ANNOUNCER_SEQUENCE, NEL);
+//! ```
 //!
 //! ## Source Material
 //!
@@ -39,21 +67,21 @@
 //! [wikipedia-ansi]: https://en.wikipedia.org/wiki/ANSI_escape_code
 #![allow(dead_code)]
 
-use std::str;
+use std::{fmt, str};
 
-/// Convert the ascii table notation `xx/yy` into a rust string.
+/// Converts the ascii table notation `xx/yy` into a rust string.
 ///
 /// A character from the [ASCII table][ascii-table] is represented in the form `xx/yy`, where `xx` represents the column
 /// number `00` to `07` in a 7-bit code table, and `yy` represents the row number `00` to `15`.
 ///
 /// The macro can be used to convert a single code point into a str, or to convert a sequence of them.
 ///
-/// ```
+/// ```ignore
 /// let a: &'static str = ascii!(06 / 01);
 /// let abc: &'static str = ascii!(06 / 01, 06 / 02, 06 / 03);
 /// ```
 ///
-/// ## Safeness
+/// ## Safety
 ///
 /// This macro converts the given `xx/yy` combination into a ascii code by the formula `(xx << 4) + yy`.
 /// The result is passed to the unsafe function std::str::from_utf8_unchecked.
@@ -64,7 +92,7 @@ use std::str;
 /// - `yy: [0,15]`
 ///
 /// Since this macro is not public and only used by the library itself, it is assumed to be used only within safe
-/// bounds.
+/// bounds, and therefore considered safe.
 ///
 /// [ascii-table]: https://en.wikipedia.org/wiki/ASCII#/media/File:USASCII_code_chart.png
 macro_rules! ascii {
@@ -77,7 +105,9 @@ macro_rules! ascii {
 enum ControlFunctionType {
     /// Elements of the C0 set.
     ///
-    /// C0 control functions are represented in 7-bit codes by bit combinations from 00/00 to 01/15.
+    /// C0 control functions are represented in 7-bit codes by bit combinations from `00/00` to `01/15`.
+    ///
+    /// The control functions of the C0 set are defined in the module [c0].
     C0,
 
     /// Elements of the C1 set.
@@ -85,27 +115,36 @@ enum ControlFunctionType {
     /// C1 control functions are represented in 7-bit codes by 2-character escape sequences of the form `ESC Fe`,
     /// where `ESC` is represented by bit combination `01/11`, and `Fe` is represented by a bit combination from
     /// `04/00` to `05/15`.
+    ///
+    /// The control functions of the C1 set are defined in the module [c1].
     C1,
 
     /// Control Sequences.
     ///
-    /// Control sequences are strings of bit combinations starting with the control function Control Function Introducer
-    /// (`CSI`), followed by one or more bit combinations representing parameters, if any, and by one ore more bit
-    /// combinations identifying the control function. The control function `CSI` itself is an element of the independent_control_function set.
+    /// Control sequences are strings of bit combinations starting with the control function
+    /// `CONTROL SEQUENCE INTRODUCER` ([`CSI`][c1::CSI]), followed by one or more bit combinations representing
+    /// parameters, if any, and by one ore more bit combinations identifying the control function. The control function
+    /// `CSI` itself is an element of the [c1] set.
+    ///
+    /// The control sequences are defined in the module [control_sequences].
     ControlSequence,
 
     /// Independent Control Functions.
     ///
     /// Independent control functions are represented in 7-bit codes by 2-character escape sequences of the form
     /// `ESC Fs`, where `ESC` is represented by bit combination `01/11`, and `Fs` is represented by a bit combination
-    /// from `06/00` to `07/14`
+    /// from `06/00` to `07/14`.
+    ///
+    /// The independent control functions are defined in the module [independent_control_functions].
     IndependentControlFunction,
 
     /// Control Strings.
     ///
     /// A control string is a string of bit combinations which may occur in the data stream as a logical entity for
     /// control purposes. A control string consists of an opening delimiter, a command string or character string, and
-    /// a terminating delimiter, the String Terminator (`ST`).
+    /// a terminating delimiter, the String Terminator ([`ST`][c1::ST]).
+    ///
+    /// The control strings are defined in the module [control_strings].
     ControlString,
 }
 
@@ -123,16 +162,24 @@ impl fmt::Debug for ControlFunctionType {
     }
 }
 
+/// An ansi control function defined in [ECMA-48][ecma-48].
+///
+/// [ecma-48]: https://www.ecma-international.org/publications-and-standards/standards/ecma-48/
 pub struct ControlFunction {
+    /// The type of the control function.
     function_type: ControlFunctionType,
+
+    /// The byte or byte combination identifying the control function.
     value: &'static str,
+
+    /// An arbitrary number of arguments for this control function.
     parameters: Vec<String>,
 }
 
 impl ControlFunction {
-    /// Creates a new control function of type [C0][ControlFunctionType::C0].
+    /// Creates a new control function of type [`C0`][ControlFunctionType::C0].
     ///
-    /// C0 control functions do not accept any parameters.
+    /// `C0` control functions do not accept any parameters.
     const fn new_c0(value: &'static str) -> Self {
         ControlFunction {
             function_type: ControlFunctionType::C0,
@@ -141,9 +188,9 @@ impl ControlFunction {
         }
     }
 
-    /// Creates a new control function of type [C1][ControlFunctionType::C1].
+    /// Creates a new control function of type [`C1`][ControlFunctionType::C1].
     ///
-    /// independent_control_function control functions do not accept any parameters.
+    /// `C1` control functions do not accept any parameters.
     const fn new_c1(value: &'static str) -> Self {
         ControlFunction {
             function_type: ControlFunctionType::C1,
@@ -152,7 +199,7 @@ impl ControlFunction {
         }
     }
 
-    /// Creates a new control function of type [ControlSequence][ControlFunctionType::ControlSequence].
+    /// Creates a new control function of type [`ControlSequence`][ControlFunctionType::ControlSequence].
     const fn new_sequence(value: &'static str, parameters: Vec<String>) -> Self {
         ControlFunction {
             function_type: ControlFunctionType::ControlSequence,
@@ -161,7 +208,8 @@ impl ControlFunction {
         }
     }
 
-    /// Creates a new control function of type [IndependentControlFunction][ControlFunctionType::IndependentControlFunction].
+    /// Creates a new control function of type
+    /// [`IndependentControlFunction`][ControlFunctionType::IndependentControlFunction].
     const fn new_independent_control_function(value: &'static str) -> Self {
         ControlFunction {
             function_type: ControlFunctionType::IndependentControlFunction,
