@@ -1,0 +1,16 @@
+[package]
+name = "ansi"
+description = "This library contains all ANSI Escape Codes that are defined in the ISO 6429 Standard"
+version = "0.1.0"
+edition = "2021"
+
+authors = ["Frank Zechert <rust.frank@zechert.net>"]
+repository = ""
+license = "MIT"
+
+# crates.io
+publish = false
+keywords = ["ansi", "escape codes", "ISO 6429", "ECMA 48", "ANSI X3.64"]
+categories = ["command-line-interface"]
+
+[dependencies]
