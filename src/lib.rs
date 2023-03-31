@@ -102,6 +102,8 @@ macro_rules! ascii {
 }
 
 /// The different types of control functions.
+///
+#[derive(Clone, Copy, PartialEq, Eq)]
 enum ControlFunctionType {
     /// Elements of the C0 set.
     ///
