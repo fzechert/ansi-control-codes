@@ -169,6 +169,50 @@ impl ControlFunction {
             parameters: vec![],
         }
     }
+
+    fn format_parameters(&self) -> String {
+        self.parameters.join(ascii!(03 / 11))
+    }
+}
+
+impl fmt::Display for ControlFunction {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self.function_type {
+            ControlFunctionType::C0 => {
+                write!(f, "{}", self.value)
+            }
+            ControlFunctionType::C1 => {
+                write!(f, "{}{}", c0::ESC, self.value)
+            }
+            ControlFunctionType::ControlSequence => {
+                let parameters = self.format_parameters();
+                write!(f, "{}{}{}", c1::CSI, parameters, self.value)
+            }
+            ControlFunctionType::IndependentControlFunction => {
+                write!(f, "{}{}", c0::ESC, self.value)
+            }
+            ControlFunctionType::ControlString => {
+                write!(f, "{}", self.value)
+            }
+        }
+    }
+}
+
+impl fmt::Debug for ControlFunction {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let function: String = self
+            .value
+            .as_bytes()
+            .into_iter()
+            .map(|b| format!("{:02}/{:02}", b >> 4, (b & 0xF)))
+            .collect();
+
+        f.debug_struct("ControlFunction")
+            .field("function_type", &self.function_type)
+            .field("function", &function)
+            .field("parameters", &self.parameters)
+            .finish()
+    }
 }
 
 pub mod c0;
