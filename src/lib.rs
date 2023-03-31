@@ -271,3 +271,42 @@ pub mod control_sequences;
 pub mod control_strings;
 pub mod independent_control_functions;
 pub mod modes;
+
+#[cfg(test)]
+mod tests {
+    use crate::c0::BEL;
+    use crate::ControlFunctionType;
+
+    /// Test the debug format of [`ControlFunctionType`].
+    #[test]
+    fn debug_control_function_type() {
+        assert_eq!(format!("{:?}", ControlFunctionType::C0), "C0");
+        assert_eq!(format!("{:?}", ControlFunctionType::C1), "C1");
+        assert_eq!(
+            format!("{:?}", ControlFunctionType::ControlSequence),
+            "Control Sequence"
+        );
+        assert_eq!(
+            format!("{:?}", ControlFunctionType::IndependentControlFunction),
+            "Independent Control Function"
+        );
+        assert_eq!(
+            format!("{:?}", ControlFunctionType::ControlString),
+            "Control String"
+        );
+    }
+
+    /// Test the debug format of [`ControlFunction`][crate::ControlFunction].
+    #[test]
+    fn debug_control_function() {
+        assert_eq!(
+            format!("{:?}", BEL),
+            "ControlFunction { function_type: C0, function: \"00/07\", parameters: [] }"
+        );
+
+        assert_eq!(
+            format!("{:?}", crate::control_sequences::CUP(None, Some(10))),
+            "ControlFunction { function_type: Control Sequence, function: \"04/08\", parameters: [\"1\", \"10\"] }"
+        );
+    }
+}
