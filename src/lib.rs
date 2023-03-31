@@ -109,7 +109,20 @@ enum ControlFunctionType {
     ControlString,
 }
 
-/// A control function.
+impl fmt::Debug for ControlFunctionType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ControlFunctionType::C0 => write!(f, "C0"),
+            ControlFunctionType::C1 => write!(f, "C1"),
+            ControlFunctionType::ControlSequence => write!(f, "Control Sequence"),
+            ControlFunctionType::IndependentControlFunction => {
+                write!(f, "Independent Control Function")
+            }
+            ControlFunctionType::ControlString => write!(f, "Control String"),
+        }
+    }
+}
+
 pub struct ControlFunction {
     function_type: ControlFunctionType,
     value: &'static str,
