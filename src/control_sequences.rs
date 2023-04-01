@@ -5,6 +5,18 @@
 //! combinations identifying the control function. The control function `CSI` itself is an element of the
 //! [C1][crate::c1] set.
 //!
+//! ## Usage
+//!
+//! You can use the control sequences inside normal strings, format them with the `format!()` macro, or print
+//! them with the `print!()` and `println!()` macros.
+//!
+//! For example, move the cursor to line 5, character 13:
+//!
+//! ```
+//! use ansi::control_sequences::CUP;
+//! print!("{}", CUP(Some(5), Some(13)));
+//! ```
+//!
 //! ## Overview of the Control Sequences
 //!
 //! ### Without Intermediate Bytes
@@ -12,7 +24,7 @@
 //! | Row Number | Column `04` | Column `05` | Column `06` |
 //! | ---------: | :---------: | :---------: | :---------: |
 //! |       `00` |   [`ICH`]   |   [`DCH`]   |   [`HPA`]   |
-//! |       `01` |   [`CUU`]   |   [`SSE`]   |   [`HPR`]   |
+//! |       `01` |   [`CUU`]   |   [`SEE`]   |   [`HPR`]   |
 //! |       `02` |   [`CUD`]   |   [`CPR`]   |   [`REP`]   |
 //! |       `03` |   [`CUF`]   |   [`SU`]    |   [`DA`]    |
 //! |       `04` |   [`CUB`]   |   [`SD`]    |   [`VPA`]   |
@@ -193,15 +205,15 @@ pub fn CPL(n: Option<u32>) -> ControlFunction {
 
 /// Active Position Report.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to PRESENTATION, `CPR` is used to report the active presentation
-/// position of the sending device as residing in the presentation component at the `n`-th line position according to
-/// the line progression and at the `m`-th character position according to the character path.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION, `CPR` is used to report
+/// the active presentation position of the sending device as residing in the presentation component at the `n`-th line
+/// position according to the line progression and at the `m`-th character position according to the character path.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to DATA, `CPR` is used to report the active data position of the
-/// sending device as residing in the data component at the `n`-th line position according to the line progression and
-/// at the `m`-th character position according to the character progression.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `CPR` is used to report the
+/// active data position of the sending device as residing in the data component at the `n`-th line position according
+/// to the line progression and at the `m`-th character position according to the character progression.
 ///
-/// `CPR` may be solicited by a DEVICE STATUS REPORT (`DSR`) or be sent unsolicited.
+/// `CPR` may be solicited by a DEVICE STATUS REPORT ([`DSR`]) or be sent unsolicited.
 ///
 /// Default value for `n` and `m` is `1`.
 pub fn CPR(n: Option<u32>, m: Option<u32>) -> ControlFunction {
@@ -382,9 +394,9 @@ pub enum AreaQualification {
 /// position of a qualified area. The last character position of the qualified area is the character position in the
 /// presentation component immediately preceding the first character position of the following qualified area.
 ///
-/// The control function operates independently of the setting of the TABULATION STOP MODE (`TSM`). The character
-/// tabulation stop set by parameter value [`AreaQualification::SetCharacterTabulationStop`] applies to the active line
-/// only.
+/// The control function operates independently of the setting of the TABULATION STOP MODE ([`TSM`][crate::modes::TSM]).
+/// The character tabulation stop set by parameter value [`AreaQualification::SetCharacterTabulationStop`] applies to
+/// the active line only.
 ///
 /// The default value for `s` is [`AreaQualification::UnprotectedUnguarded].
 ///
@@ -398,22 +410,23 @@ pub fn DAQ(s: Option<AreaQualification>) -> ControlFunction {
 
 /// Delete Character.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DSCM`) is set to PRESENTATION, `DCH` causes the contents of the active
-/// presentation position and, depending on the setting of the CHARACTER EDITING MODE (`HEM`), the contents of the `n-1`
-/// preceding or following character positions to be removed from the presentation component. The resulting gap is
-/// closed by shifting the contents of the adjacent character positions towards the active presentation position. At the
-/// other end of the shifted part, `n` character positions are put into the erased state.
+/// If the DEVICE COMPONENT SELECT MODE ([`DSCM`][crate::modes::DCSM]) is set to PRESENTATION, `DCH` causes the contents
+/// of the active presentation position and, depending on the setting of the CHARACTER EDITING MODE
+/// ([`HEM`][crate::modes::HEM]), the contents of the `n-1` preceding or following character positions to be removed
+/// from the presentation component. The resulting gap is closed by shifting the contents of the adjacent character
+/// positions towards the active presentation position. At the other end of the shifted part, `n` character positions
+/// are put into the erased state.
 ///
-/// The extent of the shifted part is established by SELECT EDITING EXTEND (`SEE`).
+/// The extent of the shifted part is established by SELECT EDITING EXTEND ([`SEE`]).
 ///
-/// The effect of `CDH` on the start or end of a selected area, the start or end of a qualified area, or a tabulation
+/// The effect of `DCH` on the start or end of a selected area, the start or end of a qualified area, or a tabulation
 /// stop in the shifted part is undefined.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to DATA, `DCH` causes the contents of the active data position
-/// and, depending on the setting of the CHARACTER EDITING MODE (`HEM`), the contents of the `n-1` preceding or
-/// following character positions to be removed from the data component. The resulting gap is closed by shifting the
-/// contents of the adjacent character positions towards the active data position. At the other end of the shifted part,
-/// `n` character positions are put into the erased state.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `DCH` causes the contents of the
+/// active data position and, depending on the setting of the CHARACTER EDITING MODE ([`HEM`][crate::modes::HEM]), the
+/// contents of the `n-1` preceding or following character positions to be removed from the data component. The
+/// resulting gap is closed by shifting the contents of the adjacent character positions towards the active data
+/// position. At the other end of the shifted part, `n` character positions are put into the erased state.
 ///
 /// Default value for `n` is `1`.
 pub fn DCH(n: Option<u32>) -> ControlFunction {
@@ -422,27 +435,29 @@ pub fn DCH(n: Option<u32>) -> ControlFunction {
 
 /// Delete Line.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to PRESENTATION, `DL` causes the contents of the active line
-/// (the line that contains the active presentation position) and, depending on the setting of the LINE EDITING MODE
-/// (`VEM`), the contents of the `n-1` preceding or following lines to be removed from the presentation component. The
-/// resulting gap is closed by shifting the contents of a number of adjacent lines towards the active line. At the other
-/// end of the shifted part, `n` lines are put into the erased state.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION, `DL` causes the contents
+/// of the active line (the line that contains the active presentation position) and, depending on the setting of the
+/// LINE EDITING MODE ([`VEM`][crate::modes::VEM]), the contents of the `n-1` preceding or following lines to be removed
+/// from the presentation component. The resulting gap is closed by shifting the contents of a number of adjacent lines
+/// towards the active line. At the other end of the shifted part, `n` lines are put into the erased state.
 ///
 /// The active presentation position is moved to the line home position in the active line. The line home position is
-/// established by the parameter value of SET LINE HOME (`SLH`). If the TABULATION STOP MODE (`TSM`) is set to SINGLE,
-/// character tabulation stops are cleared in the lines that are put into the erased state.
+/// established by the parameter value of SET LINE HOME ([`SLH`]). If the TABULATION STOP MODE
+/// ([`TSM`][crate::modes::TSM]) is set to SINGLE, character tabulation stops are cleared in the lines that are put into
+/// the erased state.
 ///
-/// The extent of the shifted part is established by SELECT EDITING EXTEND (`SEE`).
+/// The extent of the shifted part is established by SELECT EDITING EXTEND ([`SEE`]).
 ///
 /// Any occurrences of the start or end of a selected area, the start or end of a qualified area, or a tabulation stop
 /// in the shifted part, are also shifted.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to DATA, `DL` causes the contents of the active line (the line
-/// that contains the active data position) and, depending on the setting of the LINE EDITING MODE (`VEM`), the contents
-/// of the `n-1` preceding or following lines to be removed from the data component. The resulting gap is closed by
-/// shifting the contents of a number of adjacent lines towards the active line. At the other end of the shifted part,
-/// `n` lines are put into the erased state. The active data position is moved to the lines home position in the active
-/// line. The line home position is established by the parameter value of SET LINE HOME (`SLH`).
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `DL` causes the contents of the
+/// active line (the line that contains the active data position) and, depending on the setting of the LINE EDITING MODE
+/// ([`VEM`][crate::modes::VEM]), the contents of the `n-1` preceding or following lines to be removed from the data
+/// component. The resulting gap is closed by shifting the contents of a number of adjacent lines towards the active
+/// line. At the other end of the shifted part, `n` lines are put into the erased state. The active data position is
+/// moved to the lines home position in the active line. The line home position is established by the parameter value of
+/// SET LINE HOME ([`SLH`]).
 ///
 /// The default value for `n` is `1`.
 pub fn DL(n: Option<u32>) -> ControlFunction {
@@ -456,23 +471,23 @@ pub enum DeviceStatusReport {
     #[default]
     Ready = 0,
 
-    /// The device is busy, another `DSR` must be requested later.
+    /// The device is busy, another [`DSR`] must be requested later.
     BusyRepeat,
 
-    /// The device is busy, another `DSR` will be sent later.
+    /// The device is busy, another [`DSR`] will be sent later.
     BusyLater,
 
-    /// Some malfunction detected, another `DSR` must be requested later.
+    /// Some malfunction detected, another [`DSR`] must be requested later.
     MalfunctionRepeat,
 
-    /// Some malfunction detected, another `DSR` will be sent later.
+    /// Some malfunction detected, another [`DSR`] will be sent later.
     MalfunctionLater,
 
     /// A device status report is requested.
     RequestDeviceStatusReport,
 
     /// A report of the active presentation position or of the active data position in the form of ACTIVE POSITION
-    /// REPORT (`CPR`) is requested.
+    /// REPORT ([`CPR`]) is requested.
     RequestActivePositionReport,
 }
 
@@ -523,16 +538,16 @@ pub enum EraseArea {
 
 /// Erase in Area.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to PRESENTATION, `EA` causes some or all character positions in
-/// the active qualified area (the qualified area in the presentation component which contains the active presentation
-/// position) to be put into the erased state, depending on the parameter value.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION, `EA` causes some or all
+/// character positions in the active qualified area (the qualified area in the presentation component which contains
+/// the active presentation position) to be put into the erased state, depending on the parameter value.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to DATA, `EA` causes some or all character positions in the
-/// active qualified area (the qualified area in the data component which contains the active data position) to be put
-/// into the erased state, depending ont he parameter value.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `EA` causes some or all character
+/// positions in the active qualified area (the qualified area in the data component which contains the active data
+/// position) to be put into the erased state, depending ont he parameter value.
 ///
 /// Whether the character positions of protected areas are put into the erased state, or the character positions of
-/// unprotected areas only, depends on the setting of ERASURE MODE (`ERM`).
+/// unprotected areas only, depends on the setting of ERASURE MODE ([`ERM`][crate::modes::ERM]).
 ///
 /// The default value of `s` is [`EraseArea::ActivePositionToEnd`].
 pub fn EA(s: Option<EraseArea>) -> ControlFunction {
@@ -541,14 +556,15 @@ pub fn EA(s: Option<EraseArea>) -> ControlFunction {
 
 /// Erase Character.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to PRESENTATION, `ECH` causes the active presentation position
-/// and the `n-1` following character positions in the presentation component to be put into the erased state.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION, `ECH` causes the active
+/// presentation position and the `n-1` following character positions in the presentation component to be put into the
+/// erased state.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to DATA, `ECH` causes the active data position and the `n-1`
-/// following character positions in the data component to be put into the erased state.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `ECH` causes the active data
+/// position and the `n-1` following character positions in the data component to be put into the erased state.
 ///
-/// Whether the character positions of protected areas are putinto the erased state, or the character positions of
-/// unprotected areas only, depends on the setting of the ERASURE MODE (`ERM`).
+/// Whether the character positions of protected areas are put into the erased state, or the character positions of
+/// unprotected areas only, depends on the setting of the ERASURE MODE ([`ERM`][crate::modes::ERM]).
 ///
 /// The default value for `n` is `1´.
 pub fn ECH(n: Option<u32>) -> ControlFunction {
@@ -571,16 +587,16 @@ pub enum ErasePage {
 
 /// Erase In Page.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to PRESENTATION, `ED` causes some or all character positions
-/// of the active page (the page which contains the active presentation position in the presentation component) to be
-/// put into the erased state, depending on the parameter value.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION, `ED` causes some or all
+/// character positions of the active page (the page which contains the active presentation position in the presentation
+/// component) to be/ put into the erased state, depending on the parameter value.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to DATA, `ED` causes some or all character positions of the
-/// active page (the page which contains the active data position in the data component) to be put into the erased
-/// state, depending on the parameter value.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `ED` causes some or all character
+/// positions of the active page (the page which contains the active data position in the data component) to be put into
+/// the erased state, depending on the parameter value.
 ///
 /// Whether the character positions of protected areas are put into the erased state, or the character positions of
-/// unprotected areas only, depends on the setting of the ERASURE MODE (`ERM`).
+/// unprotected areas only, depends on the setting of the ERASURE MODE ([`ERM`][crate::modes::ERM]).
 ///
 /// The default value of `s` is [`ErasePage::ActivePositionToEnd`].
 pub fn ED(s: Option<ErasePage>) -> ControlFunction {
@@ -603,16 +619,16 @@ pub enum EraseField {
 
 /// Erase In Field.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to PRESENTATION, `EF` causes some or all character positions of
-/// the active field (the field which contains the active presentation position in the presentatio component) to be put
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION, `EF` causes some or all
+/// character positions of the active field (the field which contains the active presentation position in the
+/// presentation component) to be put into the erased state, depending on the parameter value.
+///
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `EF` causes some or all character
+/// positions of the active field (the field which contains the active data position in the data component) to be put
 /// into the erased state, depending on the parameter value.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to DATA, `EF` causes some or all character positions of the
-/// active field (the field which contains the active data position in the data component) to be put into the erased
-/// state, depending on the parameter value.
-///
 /// Whether the character positions of protected areas are put into the erased state, or the character positions of
-/// unprotected areas only, depends on the setting of the ERASURE MODE (`ERM`).
+/// unprotected areas only, depends on the setting of the ERASURE MODE ([`ERM`][crate::modes::ERM]).
 ///
 /// The default value for `s` is [`EraseField::ActivePositionToEnd`].
 pub fn EF(s: Option<EraseField>) -> ControlFunction {
@@ -635,16 +651,16 @@ pub enum EraseLine {
 
 /// Erase In Line.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to PRESENTATION, `EL` causes some or all character positions of
-/// the active line (the line which contains the active presentation position in the presentation component) to be put
-/// into the erased state, depending on the parameter value.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION, `EL` causes some or all
+/// character positions of the active line (the line which contains the active presentation position in the presentation
+/// component) to be put into the erased state, depending on the parameter value.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to DATA, `EL` causes some or all character positions of the
-/// active line (the line which contains the active data position in the data component) to be put into the erased
-/// state, depending on the parameter value.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `EL` causes some or all character
+/// positions of the active line (the line which contains the active data position in the data component) to be put into
+/// the erased state, depending on the parameter value.
 ///
 /// Whether the character positions of protected areas are put into the erased state, or the character positions of
-/// unprotected areas only, depends on the setting of the ERASURE MODE (`ERM`).
+/// unprotected areas only, depends on the setting of the ERASURE MODE ([`ERM`][crate::modes::ERM]).
 ///
 /// The default value for `s` is [`EraseLine::ActivePositionToEnd`].
 pub fn EL(s: Option<EraseLine>) -> ControlFunction {
@@ -696,7 +712,7 @@ pub enum Font {
 /// Font Selection.
 ///
 /// `FNT` is used to identify the character font to be selected as primary or alternative font by subsequent occurrences
-/// of SELECT GRAPHIC RENDITION (`SGR`) in the data stream.
+/// of SELECT GRAPHIC RENDITION ([`SGR`]) in the data stream.
 ///
 /// - `s` specifies the primary or alternative font concerned.
 /// - `t` identifies the character font according to a register which is to be established.
@@ -745,7 +761,7 @@ pub fn GCC(s: Option<GraphicCharacterCombination>) -> ControlFunction {
 /// Graphic Size Modification.
 ///
 /// `GSM` is used to modify for subsequent text the height and / or the width of all primary and alternative fonts
-/// identified by FONT SELECT ([`FNT`]) and established by GRAPHIC SIZE SELECTION (`GSS`). The established values
+/// identified by FONT SELECT ([`FNT`]) and established by GRAPHIC SIZE SELECTION ([`GSS`]). The established values
 /// remain in effect until the next occurrence of `GSM` or [`GSS`] in the data stream.
 ///
 /// - `h` specifies the height as a percentage of the height established by [`GSS`].
@@ -759,13 +775,13 @@ pub fn GSM(h: Option<u32>, w: Option<u32>) -> ControlFunction {
 /// Graphic Size Selection.
 ///
 /// `GSS` is used to establish for subsequent texts the height and the width of all primary and alternative fonts
-/// identified by FONT SELECT (`FNT`). The established values remain in effect until the next occurrence of `GSS` in the
+/// identified by FONT SELECT ([`FNT`]). The established values remain in effect until the next occurrence of `GSS` in the
 /// data stream.
 ///
 /// - `n` specifies the height, the width is implicitly defined by the height.
 ///
 /// The unit in which the parameter value is expressed is that established by the parameter value of SELECT SIZE UNIT
-/// (`SSU`).
+/// ([`SSU`]).
 pub fn GSS(n: u32) -> ControlFunction {
     sequence!(02 / 00, 04/03, numeric n)
 }
@@ -812,26 +828,27 @@ pub fn HVP(n: Option<u32>, m: Option<u32>) -> ControlFunction {
 
 /// Insert Character.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to PRESENTATION, `ICH` is used to prepare the insertion of `n`
-/// characters, by putting into the erased state the active presentation position and, depending on the setting of the
-/// CHARACTER EDITING MODE (`HEM`), the `n-1` preceding or following character positions in the presentation component.
-/// The previous contents of the active presentation position and an adjacent string of character positions are shifted
-/// away from the active presentation position. The contents of `n` character positions at the other end of the shifted
-/// part are removed. The active presentation position is moved to the line home position in the active line. The line
-/// home position is established by the parameter value of SET LINE HOME (`SLH`).
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION, `ICH` is used to prepare
+/// the insertion of `n` characters, by putting into the erased state the active presentation position and, depending on
+/// the setting of the CHARACTER EDITING MODE ([`HEM`][crate::modes::HEM]), the `n-1` preceding or following character
+/// positions in the presentation component. The previous contents of the active presentation position and an adjacent
+/// string of character positions are shifted away from the active presentation position. The contents of `n` character
+/// positions at the other end of the shifted part are removed. The active presentation position is moved to the line
+/// home position in the active line. The line home position is established by the parameter value of SET LINE HOME
+/// ([`SLH`]).
 ///
-/// The extent of the shifted part is established by SELECT EDITING EXTENT (`SEE`).
+/// The extent of the shifted part is established by SELECT EDITING EXTENT ([`SEE`]).
 ///
 /// The effect of `ICH` on the start or end of a selected area, the start or end of a qualified area, or a tabulation
 /// stop in the shifted part is undefined.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to DATA, `ICH` is used to prepare the insertion of `n`
-/// characters, by putting into the erased state the active data position and, depending on the setting of the
-/// CHARACTER EDITING MODE (`HEM`), the `n-1` preceding or following character positions in the data component. The
-/// previous contents of the active data position and and adjacent string of character positions are shifted away from
-/// the active data position. The contents of `n` character positions at the other end of the shifted part are removed.
-/// The active data position is moved to the line home position in the active line. The line home position is
-/// established by the parameter value of SET LINE HOME (`SLH`).
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `ICH` is used to prepare the
+/// insertion of `n` characters, by putting into the erased state the active data position and, depending on the setting
+/// of the CHARACTER EDITING MODE ([`HEM`][crate::modes::HEM]), the `n-1` preceding or following character positions in
+/// the data component. The previous contents of the active data position and and adjacent string of character positions
+/// are shifted away from the active data position. The contents of `n` character positions at the other end of the
+/// shifted part are removed. The active data position is moved to the line home position in the active line. The line
+/// home position is/ established by the parameter value of SET LINE HOME ([`SLH`]).
 ///
 /// The default value for `n` is `1`.
 pub fn ICH(n: Option<u32>) -> ControlFunction {
@@ -844,7 +861,9 @@ pub enum IdentifyDeviceControlString {
     /// Reserved for use with the DIAGNOSTIC state of the STATUS REPORT TRANSFER MODE.
     Diagnostic,
 
-    /// Reserved for Dynamically Redefinable Character Sets (`DRCS`) according to Standard ECMA-35.
+    /// Reserved for Dynamically Redefinable Character Sets according to Standard [ECMA-35][ecma-35].
+    ///
+    /// [ecma-35]: https://www.ecma-international.org/wp-content/uploads/ECMA-35_6th_edition_december_1994.pdf
     DynamicallyRedefinableCharacterSet,
 
     /// Private command string.
@@ -853,8 +872,9 @@ pub enum IdentifyDeviceControlString {
 
 /// Identify Device Control String.
 ///
-/// `IDCS` is used to specify the purpose and format of the command string of subsequent DEVICE CONTROL STRINGS (`DCS`).
-/// The specified purpose and format remain in effect until the next occurrence of `IDCS` in the data stream.
+/// `IDCS` is used to specify the purpose and format of the command string of subsequent DEVICE CONTROL STRINGS
+/// ([`DCS`][crate::c1::DCS]). The specified purpose and format remain in effect until the next occurrence of `IDCS`
+/// in the data stream.
 ///
 /// The format and interpretation of the command string corresponding to the parameter `s` are to be defined in
 /// appropriate standards. If this control function is used to identify a private command string, a private parameter
@@ -881,28 +901,29 @@ pub fn IGS(n: u32) -> ControlFunction {
 
 /// Insert Line.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to PRESENTATION, `IL` is used to prepare the insertion of `n`
-/// lines, by putting into the erased state in the presentation component the active line (the line that contains the
-/// active presentation position) and, depending on the setting of the LINE EDITING MODE (`VEM`), the `n-1` preceding
-/// or following lines. The previous contents of the active line and of adjacent lines are shifted away from the active
-/// line. The contents of `n` lines at the other end of the shifted part are removed. The active presentation position
-/// is moved to the line home position in the active line. The line home position is established by the parameter value
-/// of SET LINE HOME (`SLH`).
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION, `IL` is used to prepare
+/// the insertion of `n` lines, by putting into the erased state in the presentation component the active line
+/// (the line that contains the active presentation position) and, depending on the setting of the LINE EDITING MODE
+/// ([`VEM`][crate::modes::VEM]), the `n-1` preceding or following lines. The previous contents of the active line and
+/// of adjacent lines are shifted away from the active line. The contents of `n` lines at the other end of the shifted
+/// part are removed. The active presentation position is moved to the line home position in the active line. The line
+/// home position is established by the parameter value of SET LINE HOME ([`SLH`]).
 ///
-/// The extent of the shifted part is established by SELECT EDITING EXTENT (`SEE`).
+/// The extent of the shifted part is established by SELECT EDITING EXTENT ([`SEE`]).
 ///
 /// Any occurrence of the start or end of a selected area, the start or end of a qualified area, or a tabulation stop in
 /// the shifted part, are also shifted.
 ///
-/// If the TABULATION STOP MODE (`TSM`) is set to SINGLE, character tabulation stops are cleared in the lines that are
-/// put into the erased state.
+/// If the TABULATION STOP MODE ([`TSM`][crate::modes::TSM]) is set to SINGLE, character tabulation stops are cleared in
+/// the lines that are put into the erased state.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to DATA, `IL` is used to prepare the insertion of `n` lines, by
-/// putting into the erased state in the data component the active line (the line that contains the active data
-/// position) and, depending on the setting of the LINE EDITING MODE (`VEM`), the `n-1` preceding or following lines.
-/// The previous contents of the active line and of adjacent lines are shifted away from the active line. The contents
-/// of `n` lines at the other end of the shifted part are removed. The active data position is moved to the line home
-/// position in the active line. The line home position is established by the parameter value of SET LINE HOME (`SLH`).
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `IL` is used to prepare the
+/// insertion of `n` lines, by putting into the erased state in the data component the active line (the line that
+/// contains the active data position) and, depending on the setting of the LINE EDITING MODE
+/// ([`VEM`][crate::modes::VEM]), the `n-1` preceding or following lines. The previous contents of the active line and
+/// of adjacent lines are shifted away from the active line. The contents of `n` lines at the other end of the shifted
+/// part are removed. The active data position is moved to the line home position in the active line. The line home
+/// position is established by the parameter value of SET LINE HOME ([`SLH`]).
 ///
 /// The default value for `n` is `1`.
 pub fn IL(n: Option<u32>) -> ControlFunction {
@@ -948,8 +969,8 @@ pub enum Justification {
 ///
 /// The end of the string to be justified is indicated by the next occurrence of `JFY` in the data stream.
 ///
-/// The line home position is established by the parameter value of SET LINE HOME (`SLH`). The line limit position is
-/// established by the parameter value of SET LINE LIMIT (`SLL`).
+/// The line home position is established by the parameter value of SET LINE HOME ([`SLH`]). The line limit position is
+/// established by the parameter value of SET LINE LIMIT ([`SLL`]).
 ///
 /// The default value of `s` is [`Justification::None`].
 pub fn JFY(s: Option<Justification>) -> ControlFunction {
@@ -1009,7 +1030,7 @@ pub fn NP(n: Option<u32>) -> ControlFunction {
 /// Valid parameter values to the function [`PEC`].
 #[derive(Clone, Copy, PartialEq, Eq, Default)]
 pub enum PresentationExpandContract {
-    /// Normal, as specified by `SCS`, `SHS` or `SPI`.
+    /// Normal, as specified by [`SCS`], [`SHS`] or [`SPI`].
     #[default]
     Normal = 0,
 
@@ -1024,9 +1045,9 @@ pub enum PresentationExpandContract {
 ///
 /// `PEC` is used to establish the spacing and the extent of the graphic characters for subsequent text. The spacing is
 /// specified in the line as multiples of the spacing established by the most recent occurrence of SET CHARACTER SPACING
-/// (`SCS`) or of SELECT CHARACTER SPACING (`SHS`) or of SPACING INCREMENT (`SPI`) in the data stream. The extent of the
-/// characters is implicitly established by these control functions. The established spacing and the extent remain in
-/// effect until the next occurrence of `PEC`, of `SCS`, of `SHS` or of `SPI` in the data stream.
+/// ([`SCS`]) or of SELECT CHARACTER SPACING ([`SHS`]) or of SPACING INCREMENT ([`SPI`]) in the data stream. The extent
+/// of the characters is implicitly established by these control functions. The established spacing and the extent
+/// remain in effect until the next occurrence of `PEC`, of [`SCS`], of [`SHS`] or of [`SPI`] in the data stream.
 ///
 /// The default value for `s` is [`PresentationExpandContract::Normal`].
 pub fn PEC(s: Option<PresentationExpandContract>) -> ControlFunction {
@@ -1089,12 +1110,12 @@ pub enum PageFormat {
 /// Page Format Selection
 ///
 /// `PFS` is used to establish the available area for the imaging of pages of text based on paper size. The pages are
-/// introduced by the subsequent occurrence of FORM FEED (`FF`) in the data stream.
+/// introduced by the subsequent occurrence of FORM FEED ([`FF`][crate::c0::FF]) in the data stream.
 ///
 /// The established image area remains in effect until the next occurrence of `PFS` in the data stream.
 ///
-/// The page home position is established by the parameter value of SET PAGE HOME (`SPH`), the page limit position is
-/// established by the parameter value of SET PAGE LIMIT (`SPL`).
+/// The page home position is established by the parameter value of SET PAGE HOME ([`SPH`]), the page limit position is
+/// established by the parameter value of SET PAGE LIMIT ([`SPL`]).
 ///
 /// The default value for `s` is [`PageFormat::TallBasicText`].
 pub fn PFS(s: Option<PageFormat>) -> ControlFunction {
@@ -1182,7 +1203,7 @@ pub enum ParallelText {
 /// `PTX` with a parameter value of [`ParallelText::End`] indicates the end of the strings of text intended to be
 /// presented in parallel with one another.
 ///
-/// The default value for `s` is [`ParallelText::End]`.
+/// The default value for `s` is [`ParallelText::End`].
 ///
 /// ## Note
 ///
@@ -1241,13 +1262,14 @@ pub enum Alignment {
 /// according to the layout specified by the parameter value, see [`Alignment`].
 ///
 /// The beginning of the string to be positioned is indicated by the preceding occurrence in the data stream of either
-/// `QUAD` or one of the following formator functions: FORM FEED (`FF`), CHARACTER AND LINE POSITION (`HVP`), LINE FEED
-/// (`LF`), NEXT LINE (`NEL`), PAGE POSITION ABSOLUTE (`PPA`), PAGE POSITION BACKWARD (`PPB`), PAGE POSITION FORWARD
-/// (`PPR`), REVERSE LINE FEED (`RI`), LINE POSITION ABSOLUTE (`VPA`), LINE POSITION BACKWARD (`VPB`), LINE POSITION
-/// FORWARD (`VPR`), or LINE TABULATION (`VT`).
+/// `QUAD` or one of the following formator functions: FORM FEED ([`FF`][crate::c0::FF]), CHARACTER AND LINE POSITION
+/// ([`HVP`]), LINE FEED ([`LF`][crate::c0::LF]), NEXT LINE ([`NEL`][crate::c1::NEL]), PAGE POSITION ABSOLUTE
+/// ([`PPA`]), PAGE POSITION BACKWARD ([`PPB`]), PAGE POSITION FORWARD ([`PPR`]), REVERSE LINE FEED
+/// ([`RI`][crate::c1::RI]), LINE POSITION ABSOLUTE ([`VPA`]), LINE POSITION BACKWARD ([`VPB`]), LINE POSITION
+/// FORWARD ([`VPR`]), or LINE TABULATION ([`VT`][crate::c0::VT]).
 ///
-/// The line home position is established by the parameter value of SET LINE HOME (`SLH`). The line limit position is
-/// established by the parameter value of SET LINE LIMIT (`SLL`).
+/// The line home position is established by the parameter value of SET LINE HOME ([`SLH`]). The line limit position is
+/// established by the parameter value of SET LINE LIMIT ([`SLL`]).
 ///
 /// The default value for `s` is [`Alignment::LineHome`].
 pub fn QUAD(s: Option<Alignment>) -> ControlFunction {
@@ -1275,14 +1297,14 @@ pub fn RM(v: Vec<Mode>) -> ControlFunction {
 /// Set Additional Character Representation.
 ///
 /// `SACS` is used to establish extra inter-character escapement for subsequent text. The established extra escapement
-/// remains in effect until the next occurrence of `SACS` or of SET REDUCED CHARACTER SEPARATION (`SRCS`) in the data
-/// stream or until it is reset to the default value by a subsequent occurrence of CARRIAGE RETURN LINE FEED (`CR LF`)
-/// or of NEXT LINE (`NEL`) in the data stream.
+/// remains in effect until the next occurrence of `SACS` or of SET REDUCED CHARACTER SEPARATION ([`SRCS`]) in the data
+/// stream or until it is reset to the default value by a subsequent occurrence of CARRIAGE RETURN LINE FEED
+/// ([`CR`][crate::c0::CR] [`LF`][crate::c0::LF]) or of NEXT LINE ([`NEL`][crate::c1::NEL]) in the data stream.
 ///
 /// `n` specifies the number of units by which the inter-character escapement is enlarged.
 ///
 /// The unit in which the parameter value is expressed is that established by the parameter value of SELECT SIZE UNIT
-/// (`SSU`).
+/// ([`SSU`]).
 ///
 /// The default value for `n` is 0.
 pub fn SACS(n: Option<u32>) -> ControlFunction {
@@ -1292,7 +1314,7 @@ pub fn SACS(n: Option<u32>) -> ControlFunction {
 /// Valid parameter values to the function [`SAPV`].
 #[derive(Clone, Copy, PartialEq, Eq, Default)]
 pub enum PresentationVariant {
-    /// Default presentation (implementation-defined); cancels the effect of any preceding occurrence of `SAPV` in the
+    /// Default presentation (implementation-defined); cancels the effect of any preceding occurrence of [`SAPV`] in the
     /// data stream.
     #[default]
     Default = 0,
@@ -1364,7 +1386,7 @@ pub enum PresentationVariant {
     NoContextualShapeArabicScript,
 
     /// Contextual shape determination of Arabic scripts i not used, the graphic characters - excluding the digits -
-    /// are presented in the form thye are stored (pass-through).
+    /// are presented in the form they are stored (pass-through).
     NoContextualShapeArabicScriptExceptDigits,
 
     /// The graphic symbols used to present the decimal digits are device dependent.
@@ -1451,8 +1473,9 @@ pub enum CharacterPathScope {
     ///
     /// ## Note
     ///
-    /// This may also permit the effect to take place after the next occurrence of `CR`, `NEL` or any control function
-    /// which initiates an absolute movement of the active presentation position or the active data position.
+    /// This may also permit the effect to take place after the next occurrence of [`CR`][crate::c0::CR],
+    /// [`NEL`][crate::c1::NEL] or any control function which initiates an absolute movement of the active presentation
+    /// position or the active data position.
     Undefined = 0,
 
     /// The content of the active line in the presentation component (the line that contains the active presentation
@@ -1472,7 +1495,7 @@ pub enum CharacterPathScope {
 
 /// Select Character Path.
 ///
-/// `SCP` is used to select the character paht, relative to the line orientation, for the active line (the line that
+/// `SCP` is used to select the character path, relative to the line orientation, for the active line (the line that
 /// contains the active presentation position) and subsequent lines in the presentation component. It is also used to
 /// update the content of the active line in the presentation component and the content of the active line (the line
 /// that contains the active data position) in the data component. This takes effect immediately.
@@ -1484,13 +1507,13 @@ pub fn SCP(s: CharacterPath, t: CharacterPathScope) -> ControlFunction {
 /// Set Character Spacing.
 ///
 /// `SCS` is used to establish the character spacing for subsequent text. The established spacing remains in effect
-/// until the next occurrence of `SCS`, or of SELECT CHARACTER SPACING (`SHS`) or of SPACING INCREMENT (`SPI`) in the
-/// data stream.
+/// until the next occurrence of `SCS`, or of SELECT CHARACTER SPACING ([`SHS`]) or of SPACING INCREMENT ([`SPI`]) in
+/// the data stream.
 ///
 /// `n` specifies the character spacing.
 ///
 /// The unit in which the parameter value is expressed is that established by the parameter value of SELECT SIZE UNIT
-/// (`SSU`).
+/// ([`SSU`]).
 pub fn SCS(n: u32) -> ControlFunction {
     sequence!(02 / 00, 06 / 07, numeric n)
 }
@@ -1531,7 +1554,7 @@ pub enum StringDirection {
 /// The beginning of a directed string is indicated by `SDS` with a parameter value not equal to
 /// [`StringDirection::End`]. A directed string may contain one or more nested strings. These nested strings may be
 /// directed strings the beginning of which are indicated by `SDS` with a parameter value not equal to
-/// [`StringDirection::End`], or reversed stings the beginning of which are indicated by START REVERSED STRING (`SRS`)
+/// [`StringDirection::End`], or reversed stings the beginning of which are indicated by START REVERSED STRING ([`SRS`])
 /// with a parameter value of [`ReversedString::Start`]. Every beginning of such a string invokes the next deeper level
 /// of nesting.
 ///
@@ -1546,19 +1569,21 @@ pub enum StringDirection {
 ///
 /// ## Note 1
 ///
-/// The effect of receiving a `CVT`, `HT`, `SCP`, `SPD`, or `VT` control function within an `SDS` string is not defined.
+/// The effect of receiving a [`CVT`], [`HT`][crate::c0::HT], [`SCP`], [`SPD`], or [`VT`][crate::c0::VT] control
+/// function within an `SDS` string is not defined.
 ///
 /// ## Note 2
 ///
-/// The control functions for area definitions (`DAQ, `EPA`, `SPA`, `SSA`) should not be used within an `SDS` string.
+/// The control functions for area definitions ([`DAQ`], [`EPA`][crate::c1::EPA], [`SPA`][crate::c1::SPA],
+/// [`SSA`][crate::c1::SPA]) should not be used within an `SDS` string.
 pub fn SDS(s: Option<StringDirection>) -> ControlFunction {
     sequence!(05 / 13, selective default s)
 }
 
-/// Valid parameter values to the function [`SSE`].
+/// Valid parameter values to the function [`SEE`].
 #[derive(Clone, Copy, PartialEq, Eq, Default)]
 pub enum EditingExtend {
-    /// The shifted part is limitied to the active page in the presentation component.
+    /// The shifted part is limited to the active page in the presentation component.
     #[default]
     ActivePage = 0,
 
@@ -1582,7 +1607,7 @@ pub enum EditingExtend {
 /// depends on the parameter value.
 ///
 /// The default value for `s` is [`EditingExtend::ActivePage`].
-pub fn SSE(s: Option<EditingExtend>) -> ControlFunction {
+pub fn SEE(s: Option<EditingExtend>) -> ControlFunction {
     sequence!(05 / 01, selective default s)
 }
 
@@ -1630,8 +1655,8 @@ pub fn SEF(l: Option<Load>, s: Option<Stack>) -> ControlFunction {
 /// Valid parameter values to the function [`SGR`].
 #[derive(Clone, Copy, PartialEq, Eq, Default)]
 pub enum GraphicRendition {
-    /// Default rendition (implementation-defined), cancels the effect of any preceding occurrence of `SGR` in the data
-    /// stream regardless of the setting of the GRAPHIC RENDITION COMBINATION MODE (`GRCM`).
+    /// Default rendition (implementation-defined), cancels the effect of any preceding occurrence of [`SGR`] in the
+    /// data stream regardless of the setting of the GRAPHIC RENDITION COMBINATION MODE ([`GRCM`][crate::modes::GRCM]).
     #[default]
     Default = 0,
 
@@ -1805,7 +1830,8 @@ pub enum GraphicRendition {
 ///
 /// `SGR` is used to establish one or more graphic rendition aspects for subsequent text. The established aspects remain
 /// in effect until the next occurrence of `SGR` in the data stream, depending on the setting of the GRAPHIC RENDITION
-/// COMBINATION MODE (`GRCM`). Each graphic rendition aspect is specified by a parameter value of [`GraphicRendition`].
+/// COMBINATION MODE ([`GRCM`][crate::modes::GRCM]). Each graphic rendition aspect is specified by a parameter value of
+/// [`GraphicRendition`].
 ///
 /// The default value for `s` is [`GraphicRendition::Default`].
 ///
@@ -1846,8 +1872,8 @@ pub enum CharacterSpacing {
 /// Select Character Spacing.
 ///
 /// `SHS` is used to establish the character spacing for subsequent text. The established spacing remains in effect
-/// until the next occurrence of `SHS` or of SET CHARACTER SPACING (`SPS`) or of SPACING INCREMENT (`SPI`) in the data
-/// stream.
+/// until the next occurrence of `SHS` or of SET CHARACTER SPACING ([`SCS`]) or of SPACING INCREMENT ([`SPI`]) in the
+/// data stream.
 ///
 /// The default value for `s` is [`CharacterSpacing::TenCharacters`].
 pub fn SHS(s: Option<CharacterSpacing>) -> ControlFunction {
@@ -1868,7 +1894,7 @@ pub enum MovementDirection {
 /// Select Implicit Movement Direction.
 ///
 /// `SIMD` is used to select the direction of implicit movement of the data position relative to the character
-/// progression. The direction selected remains in effect until the next occurrence of `SIMD`.
+/// progression. The direction selected remains in effect until the next occurrence of [`SIMD`].
 ///
 /// The default value of `s` is [`MovementDirection::Normal`].
 pub fn SIMD(s: Option<MovementDirection>) -> ControlFunction {
@@ -1890,18 +1916,19 @@ pub fn SL(n: Option<u32>) -> ControlFunction {
 
 /// Set Line Home.
 ///
-/// If the DEVICE COMPONENT SELECT MODE is set to PRESENTATION, `SLH` is used to establish at character position `n` in
-/// the active line (the line that contains the active presentation position) and lines of subsequent text in the
-/// presentation component the position to which the active presentation position will be moved by subsequent
-/// occurrences of CARRIAGE RETURN (`CR`), DELETE LINE (`DL`), INSERT LINE (`IL`) or NEXT LINE (`NEL`) in the data
-/// stream. In the case of a device without data component, it is also the position ahead of which no implicit movement
-/// of the active presentation position shall occur.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION, `SLH` is used to
+/// establish at character position `n` in the active line (the line that contains the active presentation position) and
+/// lines of subsequent text in the presentation component the position to which the active presentation position will
+/// be moved by subsequent occurrences of CARRIAGE RETURN ([`CR`][crate::c0::CR]), DELETE LINE ([`DL`]), INSERT LINE
+/// ([`IL`]) or NEXT LINE ([`NEL`][crate::c1::NEL]) in the data stream. In the case of a device without data component,
+/// it is also the position ahead of which no implicit movement of the active presentation position shall occur.
 ///
-/// If the DEVICE COMPONENT SELECT MODE is set to DATA, `SLH` is used to establish at character position `n` in the
-/// active line (the line that contains the active data position) and lines of subsequent text in the data component
-/// the position to which the active data position will be moved by subsequent occurrences of CARRIAGE RETURN (`CR`),
-/// DELETE LINE (`DL`), INSERT LINE (`IL`) or NEXT LINE (`NEL`) in the data stream. It is also the position ahead of
-/// which no implicit movement of the active data position shall occur.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `SLH` is used to establish at
+/// character position `n` in the active line (the line that contains the active data position) and lines of subsequent
+/// text in the data component the position to which the active data position will be moved by subsequent occurrences of
+/// CARRIAGE RETURN ([`CR`][crate::c0::CR]), DELETE LINE ([`DL`]), INSERT LINE ([`IL`]) or NEXT LINE
+/// ([`NEL`][crate::c1::NEL]) in the data stream. It is also the position ahead of which no implicit movement of the
+/// active data position shall occur.
 ///
 /// The established position is called the line home position and remains in effect until the next occurrence of `SLH`
 /// in the data stream.
@@ -1911,20 +1938,20 @@ pub fn SLH(n: u32) -> ControlFunction {
 
 /// Set Line Limit.
 ///
-/// If the DEVICE COMPONENT SELECT MODE is set to PRESENTATION, `SLL` is used to establish at character position `n` in
-/// the active line (the line that contains the active presentation position) and lines of subsequent text in the
-/// presentation component the position to which the active presentation position will be moved by subsequent
-/// occurrences of CARRIAGE RETURN (`CR`), or NEXT LINE (`NEL`) in the data stream if the parameter value of SELECT
-/// IMPLICIT MOVEMENT DIRECTION (`SIMD`) is equal to [`MovementDirection::Opposite`]. In the case of a device without
-/// data component, it is also the position beyond which no implicit movement of the active presentation position shall
-/// occur.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION, `SLL` is used to
+/// establish at character position `n` in the active line (the line that contains the active presentation position) and
+/// lines of subsequent text in the presentation component the position to which the active presentation position will
+/// be moved by subsequent occurrences of CARRIAGE RETURN ([`CR`][crate::c0::CR]), or NEXT LINE
+/// ([`NEL`][crate::c1::NEL]) in the data stream if the parameter value of SELECT IMPLICIT MOVEMENT DIRECTION ([`SIMD`])
+/// is equal to [`MovementDirection::Opposite`]. In the case of a device without data component, it is also the position
+/// beyond which no implicit movement of the active presentation position shall occur.
 ///
-/// If the DEVICE COMPONENT SELECT MODE is set to DATA, `SLL` is used to establish at character position `n` in the
-/// active line (the line that contains the active data position) and lines of subsequent text in the data component the
-/// position beyond which no implicit movement of the active data position shall occur. It is also the position in the
-/// data component to which the active data position will be moved by subsequent occurrences of `CR` or `NEL` in the
-/// data stream, if the parameter value of SELECT IMPLICIT MOVEMENT DIRECTION (SIMD) is equal to
-/// [`MovementDirection::Opposite`].
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `SLL` is used to establish at
+/// character position `n` in the active line (the line that contains the active data position) and lines of subsequent
+/// text in the data component the position beyond which no implicit movement of the active data position shall occur.
+/// It is also the position in the data component to which the active data position will be moved by subsequent
+/// occurrences of [`CR`][crate::c0::CR] or [`NEL`][crate::c1::NEL] in the data stream, if the parameter value of
+/// SELECT IMPLICIT MOVEMENT DIRECTION ([`SIMD`]) is equal to [`MovementDirection::Opposite`].
 ///
 /// The established position is called the line limit position and remains in effect until the next occurrence of `SLL`
 /// in the data stream.
@@ -1935,12 +1962,12 @@ pub fn SLL(n: u32) -> ControlFunction {
 /// Set Line Spacing.
 ///
 /// `SLS` is used to establish the line spacing for subsequent text. The established spacing remains in effect until the
-/// next occurrence of `SLS` or of SELECT LINE SPACING (`SVS`) or of SPACING INCREMENT (`SPI`) in the data stream.
+/// next occurrence of `SLS` or of SELECT LINE SPACING ([`SVS`]) or of SPACING INCREMENT ([`SPI`]) in the data stream.
 ///
 /// `n` specifies the line spacing.
 ///
-/// The unit in which the parameter value is epxressed is that established by the paramaeter value of SELECT SIZE UNIT
-/// (`SSU`).
+/// The unit in which the parameter value is expressed is that established by the parameter value of SELECT SIZE UNIT
+/// ([`SSU`]).
 pub fn SLS(n: u32) -> ControlFunction {
     sequence!(02 / 00, 06 / 08, numeric n)
 }
@@ -1988,8 +2015,9 @@ pub enum PresentationDirectionScope {
     ///
     /// ## Note
     ///
-    /// This may also permit the effect to take place after the next occurrence of `CR`, `NEL` or any control function
-    /// which initiates an absolute movement of the active presentation position or the active data position.
+    /// This may also permit the effect to take place after the next occurrence of [`CR`][crate::c0::CR],
+    /// [`NEL`][crate::c1::NEL] or any control function which initiates an absolute movement of the active presentation
+    /// position or the active data position.
     #[default]
     Undefined = 0,
 
@@ -2026,16 +2054,18 @@ pub fn SPD(
 
 /// Set Page Home.
 ///
-/// If the DEVICE COMPONENT SELECT MODE is set to PRESENTATION, `SPH` is used to establish at line position `n` in the
-/// active page (the page that contains the active presentation position) and subsequent pages in the presentation
-/// component the position to which the active presentation position will be moved by subsequent occurrences of FORM
-/// FEED (`FF`) in the data stream. In the case of a device without data component, it is also the position ahead of
-/// which no implicit movement of the active presentation position shall occur.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION, `SPH` is used to
+/// establish at line position `n` in the active page (the page that contains the active presentation position) and
+/// subsequent pages in the presentation component the position to which the active presentation position will be moved
+/// by subsequent occurrences of FORM FEED ([`FF`][crate::c0::FF]) in the data stream. In the case of a device without
+/// data component, it is also the position ahead of which no implicit movement of the active presentation position
+/// shall occur.
 ///
-/// If the DEVICE COMPONENT SELECT MODE is set to DATA, `SPH` is used to establish at line position `n´ in the active page
-/// (the page that contains the active data position) and subsequent pages in the data component the position to which
-/// the active data position will be moved by subsequent occurrences of FORM FEED (`FF`) in the data stream. It is also
-/// the position ahead of which no implicit movement of the active presentation position shall occur.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `SPH` is used to establish at
+/// line position `n´ in the active page (the page that contains the active data position) and subsequent pages in the
+/// data component the position to which the active data position will be moved by subsequent occurrences of FORM FEED
+/// ([`FF`][crate::c0::FF]) in the data stream. It is also the position ahead of which no implicit movement of the
+/// active presentation position shall occur.
 ///
 /// The established position is called the page home position and remains in effect until the next occurrence of ´SPH`
 /// in the data stream.
@@ -2046,30 +2076,30 @@ pub fn SPH(n: u32) -> ControlFunction {
 /// Spacing Increment.
 ///
 /// `SPI` is used to establish the line spacing and the character spacing for subsequent text. The established line
-/// spacing remains in effect until the next occurrence of `SPI` or of SET LINE SPACING (`SLS`) or of SELECT LINE
-/// SPACING (`SVS`) in the data stream. The established character spacing remains in effect until the next occurrence
-/// of SET CHARACTER SPACING (`SCS`) or of SELECT CHARACTER SPACING (`SHS`) in the data stream.
+/// spacing remains in effect until the next occurrence of `SPI` or of SET LINE SPACING ([`SLS`]) or of SELECT LINE
+/// SPACING ([`SVS`]) in the data stream. The established character spacing remains in effect until the next occurrence
+/// of SET CHARACTER SPACING ([`SCS`]) or of SELECT CHARACTER SPACING ([`SHS`]) in the data stream.
 ///
 /// `l` specifies the line spacing.  
 /// `c` specifies the character spacing.
 ///
 /// The unit in which the parameter values are expressed is that established by the parameter value of SELECT SIZE UNIT
-/// (`SSU`).
+/// ([`SSU`]).
 pub fn SPI(l: u32, c: u32) -> ControlFunction {
     sequence!(02 / 00, 04 / 07, numeric l, numeric c)
 }
 
 /// Set Page Limit.
 ///
-/// If the DEVICE COMPONENT SELECT MODE is set to PRESENTATION, `SPL` is used to establish at line position `n` in the
-/// active page (the page that contains the active presentation position) and pages of subsequent text in the
-/// presentation component the position beyond which the active presentation position can normally not be moved. In the
-/// case of a device without data component, it is also the position beyond which no implicit movement of the active
-/// presentation position shall occur.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION, `SPL` is used to
+/// establish at line position `n` in the active page (the page that contains the active presentation position) and
+/// pages of subsequent text in the presentation component the position beyond which the active presentation position
+/// can normally not be moved. In the case of a device without data component, it is also the position beyond which no
+/// implicit movement of the active presentation position shall occur.
 ///
-/// If the DEVICE COMPONENT SELECT MODE is set to DATA, `SPL` is used to establish at line position `n` in the active
-/// page (the page that contains the active data position) and pages of subsequent text in the data component the
-/// position beyond which no implicit movement of the active data position shall occur.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `SPL` is used to establish at
+/// line position `n` in the active page (the page that contains the active data position) and pages of subsequent text
+/// in the data component the position beyond which no implicit movement of the active data position shall occur.
 ///
 /// The established position is called the page limit position and remains in effect until the next occurrence of `SPL`
 /// in the data stream.
@@ -2118,14 +2148,15 @@ pub fn SR(n: Option<u32>) -> ControlFunction {
 /// Set Reduced Character Separation.
 ///
 /// `SRCS` is used to establish reduced inter-character escapement for subsequent text. The established reduced
-/// escapement remains in effect until the next occurrence of `SRCS` or of SET ADDITIONAL CHARACTER SEPARATION (`SACS`)
-/// in the data stream or until it is reset to the default value by a subsequent occurrence of CARRIAGE RETURN/LINE FEED
-/// (`CR/LF`) or of NEXT LINE (`NEL`) in the data stream.
+/// escapement remains in effect until the next occurrence of `SRCS` or of SET ADDITIONAL CHARACTER SEPARATION
+/// ([`SACS`]) in the data stream or until it is reset to the default value by a subsequent occurrence of
+/// CARRIAGE RETURN/LINE FEED ([`CR`][crate::c0::CR]/[`LF`][crate::c0::LF]) or of NEXT LINE ([`NEL`][crate::c1::NEL])
+/// in the data stream.
 ///
 /// `n` specifies the number of units by which the inter-character escapement is reduced.
 ///
 /// The unit in which the parameter values are expressed is that established by the parameter value of SELECT SIZE UNIT
-/// (`SSU`).
+/// ([`SSU`]).
 ///
 /// The default value of `n` is `0`.
 pub fn SRCS(n: Option<u32>) -> ControlFunction {
@@ -2152,7 +2183,7 @@ pub enum ReversedString {
 /// The beginning of a reversed string is indicated by `SRS` with a parameter value of [`ReversedString::Start`].
 /// A reversed string may contain one or more nested strings. These nested strings may be reversed strings the
 /// beginnings of which are indicated by `SRS` with a parameter value of [`ReversedString::Start`], or directed strings
-/// the beginnings of which are indicated by START DIRECTED STRING (`SDS`) with a parameter value not equal to
+/// the beginnings of which are indicated by START DIRECTED STRING ([`SDS`]) with a parameter value not equal to
 /// [`StringDirection::End`]. Every beginning of such a string invokes the next deeper level of nesting.
 ///
 /// This Standard does not define the location of the active data position within any such nested string.
@@ -2166,12 +2197,13 @@ pub enum ReversedString {
 ///
 /// ## Note 1
 ///
-/// The effect of receiving a `CVT`, `HT`, `SCP`, `SPD`, or `VT` control function within an `SRS` string is not defined.
+/// The effect of receiving a [`CVT`], [`HT`][crate::c0::HT], [`SCP`], [`SPD`], or [`VT`][crate::c0::VT] control
+/// function within an `SRS` string is not defined.
 ///
 /// ## Note 2
 ///
-/// The control functions for area definition (`DAQ`, `EPA`, `ESA`, `SPA`, `SSA`) should not be used within an `SRS`
-/// string.
+/// The control functions for area definition ([`DAQ`], [`EPA`][crate::c1::EPA], [`ESA`][crate::c1::ESA],
+/// [`SPA`][crate::c1::SPA], [`SSA`][crate::c1::SSA]) should not be used within an `SRS` string.
 pub fn SRS(s: Option<ReversedString>) -> ControlFunction {
     sequence!(05 / 11, selective default s)
 }
@@ -2220,20 +2252,21 @@ pub fn SSU(s: Option<SizeUnit>) -> ControlFunction {
 
 /// Set Space Width.
 ///
-/// `SSW` is used to establish for subsequent text the character escapement associated with the character SPACE. The
+/// `SSW` is used to establish for subsequent text the character escapement associated with the character `SPACE`. The
 /// established escapement remains in effect until the next occurrence of `SSW` in the data stream or until it is reset
-/// to the default value by a subsequent occurrence of CARRIAGE RETURN/LINE FEED (`CR/LF`), CARRIAGE RETURN/FORM FEED
-/// (`CR/FF`), or of NEXT LINE (`NEL`) in the data stream.
+/// to the default value by a subsequent occurrence of CARRIAGE RETURN/LINE FEED
+/// ([`CR`][crate::c0::CR]/[`LF`][crate::c0::LF]), CARRIAGE RETURN/FORM FEED
+/// ([`CR`][crate::c0::CR]/[`FF`][crate::c0::FF]), or of NEXT LINE ([`NEL`][crate::c1::NEL]) in the data stream.
 ///
 /// `n` specifies the escapement.
 ///
 /// The unit in which the parameter value is expressed is that established by the parameter value of SELECT SIZE UNIT
-/// (`SSU`).
+/// ([`SSU`]).
 ///
 /// The default character escapement of SPACE is specified by the most recent occurrence of SET CHARACTER SPACING
-/// (`SCS`) or of SELECT CHARACTER SPACING (`SHS`) or of SELECT SPACING INCREMENT (`SPI`) in the data stream if the
-/// current font has constant spacing, or is specified by the nominal width of the character SPACE in the current font
-/// if that font has proportional spacing.
+/// ([`SCS`]) or of SELECT CHARACTER SPACING ([`SHS`]) or of SELECT SPACING INCREMENT ([`SPI`]) in the data stream if
+/// the current font has constant spacing, or is specified by the nominal width of the character `SPACE` in the current
+/// font if that font has proportional spacing.
 pub fn SSW(n: u32) -> ControlFunction {
     sequence!(02 / 00, 05 / 11, numeric n)
 }
@@ -2300,7 +2333,7 @@ pub enum LineSpacing {
 /// Select Line Spacing.
 ///
 /// `SVS` is used to establish the line spacing for subsequent text. The established spacing remains in effect until the
-/// next occurrence of `SVS` or of SET LINE SPACING (`SLS`) or of SPACING INCREMENT (`SPI`) in the data stream.
+/// next occurrence of `SVS` or of SET LINE SPACING ([`SLS`]) or of SPACING INCREMENT ([`SPI`]) in the data stream.
 ///
 /// The default value for `s` is [`LineSpacing::SixLinesPer25`].
 pub fn SVS(s: Option<LineSpacing>) -> ControlFunction {
@@ -2350,12 +2383,23 @@ pub fn TATE(n: u32) -> ControlFunction {
 /// Valid parameter values to the function [`TBC`].
 #[derive(Clone, Copy, PartialEq, Eq, Default)]
 pub enum ClearTabulation {
+    /// Clear the character tabulation stop at the active presentation position.
     #[default]
     CharacterTabulationStopActivePosition = 0,
+
+    /// Clear the line tabulation stop at the active line.
     LineTabulationStopActiveLine,
+
+    /// Clear all character tabulation stops at the active line.
     AllCharacterTabulationStopsActiveLine,
+
+    /// Clear all character tabulation stops.
     AllCharacterTabulationStops,
+
+    /// Clear all line tabulation stops.
     AllLineTabulationStops,
+
+    /// Clear all tabulation stops.
     AllTabulationStops,
 }
 
@@ -2386,7 +2430,7 @@ pub fn TBC(s: Option<ClearTabulation>) -> ControlFunction {
 /// code. For a 7-bit code, the permissible range of values is `32` to `127`; for an 8-bit code, the permissible range
 /// of values is `32` to `127` and `160` to `255`.
 ///
-/// The default value ofr `m` is `32`.
+/// The default value of `m` is `32`.
 pub fn TCC(n: u32, m: Option<u32>) -> ControlFunction {
     let k = m.unwrap_or(32);
     sequence!(02 / 00, 06 / 03, numeric n, numeric k)
