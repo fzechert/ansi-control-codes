@@ -5,8 +5,20 @@
 //! The 3-character escape sequence designating and invoking this C0 set is `ESC 02/01 04/00`,
 //! see [`ANNOUNCER_SEQUENCE`].
 //!
-//! It is assumed that even with no invoked C0 set, the control character `ESCAPE` (`ESC`) is always available, and is
+//! It is assumed that even with no invoked C0 set, the control character `ESCAPE` ([`ESC`]) is always available, and is
 //! represented by bit combination `01/00`.
+//!
+//! ## Usage
+//!
+//! You can use the Elements of the C0 set inside normal strings, format them with the `format!()` macro, or print
+//! them with the `print!()` and `println!()` macros.
+//!
+//! For example, designate the C0 set, then ring the bell.
+//!
+//! ```
+//! use ansi::c0::{ANNOUNCER_SEQUENCE, BEL};
+//! println!("{}{}", ANNOUNCER_SEQUENCE, BEL);
+//! ```
 //!
 //! ## Overview of the C0 Set
 //!
@@ -36,7 +48,7 @@ macro_rules! c0 {
     };
 }
 
-/// Announcer Sequence for C0.
+/// Announcer Sequence for Control Set C0.
 ///
 /// Designate the C0 set of control functions as the active set of control functions.
 ///
@@ -46,7 +58,7 @@ macro_rules! c0 {
 ///
 /// ## Note 2
 ///
-/// It is assumed that even with no invoked C0 set, the control character `ESCAPE` (`ESC`) is available, and is
+/// It is assumed that even with no invoked C0 set, the control character ESCAPE (`ESC`) is available, and is
 /// represented by the bit combination `01/11`.
 pub const ANNOUNCER_SEQUENCE: &'static str = ascii!(01 / 11, 02 / 01, 04 / 00);
 
@@ -54,7 +66,9 @@ pub const ANNOUNCER_SEQUENCE: &'static str = ascii!(01 / 11, 02 / 01, 04 / 00);
 ///
 /// `ACK` is transmitted by a receiver as an affirmative response to the sender.
 ///
-/// The use of `ACK` is defined in ISO 1745.
+/// The use of `ACK` is defined in [ISO 1745][iso-1745].
+///
+/// [iso-1745]: https://www.ecma-international.org/wp-content/uploads/ECMA-16_2nd_edition_june_1973.pdf
 pub const ACK: ControlFunction = c0!(00 / 06);
 
 /// Bell.
@@ -68,7 +82,7 @@ pub const BEL: ControlFunction = c0!(00 / 07);
 /// opposite to that of the implicit movement.
 ///
 /// The direction of the implicit movement depends on the parameter value of Select Implicit Movement Direction
-/// (`SIMD`).
+/// ([`SIMD`][crate::control_sequences::SIMD]).
 pub const BS: ControlFunction = c0!(00 / 08);
 
 /// Cancel.
@@ -80,24 +94,30 @@ pub const CAN: ControlFunction = c0!(01 / 08);
 
 /// Carriage Return.
 ///
-/// The effect of `CR` depends on the setting of the DEVICE COMPONENT SELECT MODE (`DCSM`) and on the parameter value of
-/// SELECT IMPLICIT MOVEMENT DIRECTION (`SIMD`).
+/// The effect of `CR` depends on the setting of the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) and
+/// on the parameter value of SELECT IMPLICIT MOVEMENT DIRECTION ([`SIMD`][crate::control_sequences::SIMD]).
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to PRESENTATION and with the parameter value of `SIMD` equal to
-/// `0`, `CR` causes the active presentation position to be moved to the line home position of the same line in the
-/// presentation component. The line home position is established by the parameter value of SET LINE HOME (`SLH`).
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION and with the parameter
+/// value of [`SIMD`][crate::control_sequences::SIMD] equal to
+/// [`Normal`][crate::control_sequences::MovementDirection::Normal], `CR` causes the active presentation position to be
+/// moved to the line home position of the same line in the presentation component. The line home position is
+/// established by the parameter value of SET LINE HOME ([`SLH`][crate::control_sequences::SLH]).
 ///
-/// With a parameter value of `SIMD` equal to `1`, `CR` causes the active presentation position to be moved to the line
-/// limit position of the same line in the presentation component. The line limit position is established by the
-/// parameter value of SET LINE LIMIT (`SSL`).
+/// With a parameter value of [`SIMD`][crate::control_sequences::SIMD] equal to
+/// [`Opposite`][crate::control_sequences::MovementDirection::Opposite], `CR` causes the active presentation position to
+/// be moved to the line limit position of the same line in the presentation component. The line limit position is
+/// established by the parameter value of SET LINE LIMIT ([`SLL`][crate::control_sequences::SLL]).
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to DATA and with a parameter of `SIMD` equal to `0`, `CR` causes
-/// the active data position to be moved to the line home position of the same line in the data component. The line home
-/// position is established by the parameter value of SET LINE HOME (`SLH`).
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA and with a parameter of
+/// [`SIMD`][crate::control_sequences::SIMD] equal to [`Normal`][crate::control_sequences::MovementDirection::Normal],
+/// `CR` causes the active data position to be moved to the line home position of the same line in the data component.
+/// The line home position is established by the parameter value of SET LINE HOME
+/// ([`SLH`][crate::control_sequences::SLH]).
 ///
-/// With a parameter value of `SIMD` equal to `1`, `CR` causes the active data position to be moved to the line limit
-/// position of the same line in the data component. The line limit position is established by the parameter value of
-/// SET LINE LIMIT (`SSL`).
+/// With a parameter value of [`SIMD`][crate::control_sequences::SIMD] equal to
+/// [`Opposite`][crate::control_sequences::MovementDirection::Opposite], `CR` causes the active data position to be
+/// moved to the line limit position of the same line in the data component. The line limit position is established by
+/// the parameter value of SET LINE LIMIT ([`SLL`][crate::control_sequences::SLL]).
 pub const CR: ControlFunction = c0!(00 / 13);
 
 /// Device Control One.
@@ -135,7 +155,9 @@ pub const DC4: ControlFunction = c0!(01 / 04);
 ///
 /// `DLE` is used exclusively to provide supplementary transmission control functions.
 ///
-/// The use of `DLE` is defined in ISO 1745.
+/// The use of `DLE` is defined in [ISO 1745][iso-1745].
+///
+/// [iso-1745]: https://www.ecma-international.org/wp-content/uploads/ECMA-16_2nd_edition_june_1973.pdf
 pub const DLE: ControlFunction = c0!(01 / 00);
 
 /// End Of Medium.
@@ -148,14 +170,18 @@ pub const EM: ControlFunction = c0!(01 / 09);
 ///
 /// `ENQ` is transmitted by a sender as a request for a response from a receiver.
 ///
-/// The use of `EOT` is defined in ISO 1745.
+/// The use of `ENQ` is defined in [ISO 1745][iso-1745].
+///
+/// [iso-1745]: https://www.ecma-international.org/wp-content/uploads/ECMA-16_2nd_edition_june_1973.pdf
 pub const ENQ: ControlFunction = c0!(00 / 05);
 
 /// End Of Transmission.
 ///
 /// `EOT` is used to indicate the conclusion of the transmission of one or more texts.
 ///
-/// The use of `EOT` is defined in ISO 1745.
+/// The use of `EOT` is defined in [ISO 1745][iso-1745].
+///
+/// [iso-1745]: https://www.ecma-international.org/wp-content/uploads/ECMA-16_2nd_edition_june_1973.pdf
 pub const EOT: ControlFunction = c0!(00 / 04);
 
 /// Escape.
@@ -163,7 +189,9 @@ pub const EOT: ControlFunction = c0!(00 / 04);
 /// `ESC` is used for code extension purposes. It causes the meanings of a limited number of bit combinations following
 /// it in the data stream to be changed.
 ///
-/// The use of `ESC` is defined in Standard ECMA-35.
+/// The use of `ESC` is defined in Standard [ECMA-35][ecma-35].
+///
+/// [ecma-35]: https://www.ecma-international.org/wp-content/uploads/ECMA-35_6th_edition_december_1994.pdf
 pub const ESC: ControlFunction = c0!(01 / 11);
 
 /// End Of Transmission Block.
@@ -171,21 +199,25 @@ pub const ESC: ControlFunction = c0!(01 / 11);
 /// `ETB` is used to indicate the end of a block of data where the data are divided into such blocks for transmission
 /// purposes.
 ///
-/// The use of `ETB` is defined in ISO 1745.
+/// The use of `ETB` is defined in [ISO 1745][iso-1745].
+///
+/// [iso-1745]: https://www.ecma-international.org/wp-content/uploads/ECMA-16_2nd_edition_june_1973.pdf
 pub const ETB: ControlFunction = c0!(01 / 07);
 
 /// End Of Text.
 ///
 /// `ETX` is used to indicate the end of a text.
 ///
-/// The use of `ETX` is defined in ISO 1745.
+/// The use of `ETX` is defined in [ISO 1745][iso-1745].
+///
+/// [iso-1745]: https://www.ecma-international.org/wp-content/uploads/ECMA-16_2nd_edition_june_1973.pdf
 pub const ETX: ControlFunction = c0!(00 / 03);
 
 /// Form Feed.
 ///
 /// `FF` causes the active presentation position to be moved to the corresponding character position of the line at the
 /// page home position of the next form or page in the presentation component. The page home position is established by
-/// the parameter value of SET PAGE HOME (`SPH`).
+/// the parameter value of SET PAGE HOME ([`SPH`][crate::control_sequences::SPH]).
 pub const FF: ControlFunction = c0!(00 / 12);
 
 /// Character Tabulation.
@@ -193,11 +225,12 @@ pub const FF: ControlFunction = c0!(00 / 12);
 /// `HT` causes the active presentation position to be moved to the following character tabulation stop in the
 /// presentation component.
 ///
-/// In addition, if that following character tabulation stop has been set by TABULATION ALIGN CENTRE (`TAC`), TABULATION
-/// ALIGN LEADING EDGE (`TALE`), TABULATION ALIGN TRAILING EDGE (`TATE`) or TABULATION CENTERED ON CHARACTER (`TCC`),
-/// `HT` indicates the beginning of a string of text which is to be positioned within a line according to the properties
-/// of that tabulation stop. The end of the string is indicated by the next occurrence of `HT` or CARRIAGE RETURN
-/// ([`CR`]) or NEXT LINE ([`NEL`][crate::c1::NEL]) in the data stream.
+/// In addition, if that following character tabulation stop has been set by TABULATION ALIGN CENTRE
+/// ([`TAC`][crate::control_sequences::TAC]), TABULATION ALIGN LEADING EDGE ([`TALE`][crate::control_sequences::TALE]),
+/// TABULATION ALIGN TRAILING EDGE ([`TATE`][crate::control_sequences::TATE]) or TABULATION CENTRED ON CHARACTER
+/// ([`TCC`][crate::control_sequences::TCC]), `HT` indicates the beginning of a string of text which is to be positioned
+/// within a line according to the properties of that tabulation stop. The end of the string is indicated by the next
+/// occurrence of `HT` or CARRIAGE RETURN ([`CR`]) or NEXT LINE ([`NEL`][crate::c1::NEL]) in the data stream.
 pub const HT: ControlFunction = c0!(00 / 09);
 
 /// Information Separator One (US - Unit Separator).
@@ -226,11 +259,12 @@ pub const IS4: ControlFunction = c0!(01 / 12);
 
 /// Line Feed.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to PRESENTATION, `LF` causes the active presentation position
-/// to be moved to the corresponding character position of the following line in the presentation component.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to PRESENTATION, `LF` causes the active
+/// presentation position to be moved to the corresponding character position of the following line in the presentation
+/// component.
 ///
-/// If the DEVICE COMPONENT SELECT MODE (`DCSM`) is set to DATA, `LF` causes the active data position to be moved to the
-/// corresponding character position of the following line in the data component.
+/// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `LF` causes the active data
+/// position to be moved to the corresponding character position of the following line in the data component.
 pub const LF: ControlFunction = c0!(00 / 10);
 
 /// Locking-Shift Zero.
@@ -250,18 +284,22 @@ pub const LS0: ControlFunction = c0!(00 / 15);
 /// `LS1` is used for code extension purposes. It causes the meanings of the bit combinations following it in the data
 /// stream to be changed.
 ///
-/// The use of `LS1` is defined in Standard ECMA-35.
+/// The use of `LS1` is defined in Standard [ECMA-35][ecma-35].
 ///
 /// ## Note
 ///
 /// `LS1` is used in 8-bit environments only; in 7-bit environments SHIFT-OUT ([`SO`]) is used instead.
+///
+/// [ecma-35]: https://www.ecma-international.org/wp-content/uploads/ECMA-35_6th_edition_december_1994.pdf
 pub const LS1: ControlFunction = c0!(00 / 14);
 
 /// Negative Acknowledge.
 ///
 /// `NAK` is transmitted by a receiver as a negative response to the sender.
 ///
-/// The use of `NAK` is defined in ISO 1745.
+/// The use of `NAK` is defined in [ISO 1745][iso-1745].
+///
+/// [iso-1745]: https://www.ecma-international.org/wp-content/uploads/ECMA-16_2nd_edition_june_1973.pdf
 pub const NAK: ControlFunction = c0!(01 / 05);
 
 /// Null.
@@ -276,11 +314,13 @@ pub const NUL: ControlFunction = c0!(00 / 00);
 /// `SI` is used for code extension purposes. It causes the meanings of the bit combinations following it in the data
 /// stream to be changed.
 ///
-/// The use of `SI` is defined in Standard ECMA-35.
+/// The use of `SI` is defined in Standard [ECMA-35][ecma-35].
 ///
 /// ## Note
 ///
-/// `SI` is used in 7-bit environments only; in 8-bit environments LOCKING-SHIFT ZERO (`LS0`) is used instead.
+/// `SI` is used in 7-bit environments only; in 8-bit environments LOCKING-SHIFT ZERO ([`LS0`]) is used instead.
+///
+/// [ecma-35]: https://www.ecma-international.org/wp-content/uploads/ECMA-35_6th_edition_december_1994.pdf
 pub const SI: ControlFunction = c0!(00 / 15);
 
 /// Shift-Out.
@@ -288,25 +328,31 @@ pub const SI: ControlFunction = c0!(00 / 15);
 /// `SO` is used for code extension purposes. It causes the meanings of the bit combinations following it in the data
 /// stream to be changed.
 ///
-/// The use of `SI` is defined in Standard ECMA-35.
+/// The use of `SI` is defined in Standard [ECMA-35][ecma-35].
 ///
 /// ## Note
 ///
-/// `SO` is used in 7-bit environments only; in 8-bit environments LOCKING-SHIFT ONE (`LS1`) is used instead.
+/// `SO` is used in 7-bit environments only; in 8-bit environments LOCKING-SHIFT ONE ([`LS1`]) is used instead.
+///
+/// [ecma-35]: https://www.ecma-international.org/wp-content/uploads/ECMA-35_6th_edition_december_1994.pdf
 pub const SO: ControlFunction = c0!(00 / 14);
 
 /// Start of Heading.
 ///
 /// `SOH` is used to indicate the beginning of a heading.
 ///
-/// The use of `SOH` is defined in ISO 1745.
+/// The use of `SOH` is defined in [ISO 1745][iso-1745].
+///
+/// [iso-1745]: https://www.ecma-international.org/wp-content/uploads/ECMA-16_2nd_edition_june_1973.pdf
 pub const SOH: ControlFunction = c0!(00 / 01);
 
 /// Start of Text.
 ///
 /// `STX` is used to indicate the beginning of a text and the ned of a heading.
 ///
-/// The use of `STX` is defined in ISO 1745.
+/// The use of `STX` is defined in [ISO 1745][iso-1745].
+///
+/// [iso-1745]: https://www.ecma-international.org/wp-content/uploads/ECMA-16_2nd_edition_june_1973.pdf
 pub const STX: ControlFunction = c0!(00 / 02);
 
 /// Substitute.
@@ -320,7 +366,9 @@ pub const SUB: ControlFunction = c0!(01 / 10);
 /// `SYN` is used by a synchronous transmission system in the absence of any other character (idle condition) to provide
 /// a signal from which synchronism may be achieved or retained between data terminal equipment.
 ///
-/// The use of `SYN` is defined in ISO 1745.
+/// The use of `SYN` is defined in [ISO 1745][iso-1745].
+///
+/// [iso-1745]: https://www.ecma-international.org/wp-content/uploads/ECMA-16_2nd_edition_june_1973.pdf
 pub const SYN: ControlFunction = c0!(01 / 06);
 
 /// Line Tabulation.
