@@ -12,7 +12,7 @@
 //! For example, to disable manual input:
 //!
 //! ```
-//! use ansi::independent_control_functions::DMI;
+//! use ansi_control_codes::independent_control_functions::DMI;
 //! println!("{}", DMI);
 //! ```
 //!

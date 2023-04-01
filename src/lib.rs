@@ -28,14 +28,14 @@
 //! The control functions can be put into normal strings. For example, to ring the bell:
 //!
 //! ```
-//! use ansi::c0::BEL;
+//! use ansi_control_codes::c0::BEL;
 //! println!("Let's ring the bell {}", BEL);
 //! ```
 //!
 //! Or to move the cursor to line 5, column 13:
 //!
 //! ```
-//! use ansi::control_sequences::CUP;
+//! use ansi_control_codes::control_sequences::CUP;
 //! print!("{}", CUP(5.into(), 13.into()));
 //! ```
 //!
@@ -43,7 +43,7 @@
 //! This is possible by invoking one of the announcer sequences.
 //!
 //! ```
-//! use ansi::c1::{ANNOUNCER_SEQUENCE, NEL};
+//! use ansi_control_codes::c1::{ANNOUNCER_SEQUENCE, NEL};
 //! // announce the C1 control function set, then move to the next line.
 //! print!("{}{}", ANNOUNCER_SEQUENCE, NEL);
 //! ```

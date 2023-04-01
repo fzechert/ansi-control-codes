@@ -13,7 +13,7 @@
 //! For example, move the cursor to line 5, character 13:
 //!
 //! ```
-//! use ansi::control_sequences::CUP;
+//! use ansi_control_codes::control_sequences::CUP;
 //! print!("{}", CUP(Some(5), Some(13)));
 //! ```
 //!

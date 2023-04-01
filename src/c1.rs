@@ -16,7 +16,7 @@
 //! For example, designate the C1 set, then set a character tabulation stop.
 //!
 //! ```
-//! use ansi::c1::{ANNOUNCER_SEQUENCE, HTS};
+//! use ansi_control_codes::c1::{ANNOUNCER_SEQUENCE, HTS};
 //! println!("{}{}", ANNOUNCER_SEQUENCE, HTS);
 //! ```
 //!

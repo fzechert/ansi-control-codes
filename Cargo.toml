@@ -1,5 +1,5 @@
 [package]
-name = "ansi"
+name = "ansi-control-codes"
 description = "This library contains all ANSI Escape Codes that are defined in the ISO 6429 Standard"
 version = "0.0.1"
 edition = "2021"

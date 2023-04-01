@@ -16,7 +16,7 @@
 //! For example, designate the C0 set, then ring the bell.
 //!
 //! ```
-//! use ansi::c0::{ANNOUNCER_SEQUENCE, BEL};
+//! use ansi_control_codes::c0::{ANNOUNCER_SEQUENCE, BEL};
 //! println!("{}{}", ANNOUNCER_SEQUENCE, BEL);
 //! ```
 //!
