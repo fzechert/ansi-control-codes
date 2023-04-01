@@ -5,7 +5,7 @@ version = "0.0.1"
 edition = "2021"
 
 authors = ["Frank Zechert <rust.frank@zechert.net>"]
-repository = "https://git.zechert.net/fzechert/ansi.git"
+repository = "https://git.zechert.net/fzechert/ansi-control-codes.git"
 license = "MIT"
 
 # crates.io
