@@ -10,7 +10,7 @@ license = "MIT"
 
 # crates.io
 publish = true
-keywords = ["ansi", "escape codes", "ISO 6429", "ECMA 48", "ANSI X3.64"]
+keywords = ["ansi", "escape-codes", "ISO-6429", "ECMA-48", "ANSI-X364"]
 categories = ["command-line-interface"]
 include = ["**/*.rs", "Cargo.toml"]
 
