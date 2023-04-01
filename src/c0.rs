@@ -6,7 +6,7 @@
 //! see [`ANNOUNCER_SEQUENCE`].
 //!
 //! It is assumed that even with no invoked C0 set, the control character `ESCAPE` ([`ESC`]) is always available, and is
-//! represented by bit combination `01/00`.
+//! represented by bit combination `01/11`.
 //!
 //! ## Usage
 //!
