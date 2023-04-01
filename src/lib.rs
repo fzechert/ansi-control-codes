@@ -65,7 +65,6 @@
 //! [ecma-48]: https://www.ecma-international.org/publications-and-standards/standards/ecma-48/
 //! [iso-6429]: https://www.iso.org/standard/12782.html
 //! [wikipedia-ansi]: https://en.wikipedia.org/wiki/ANSI_escape_code
-#![allow(dead_code)]
 
 use std::{fmt, str};
 
@@ -139,15 +138,6 @@ enum ControlFunctionType {
     ///
     /// The independent control functions are defined in the module [independent_control_functions].
     IndependentControlFunction,
-
-    /// Control Strings.
-    ///
-    /// A control string is a string of bit combinations which may occur in the data stream as a logical entity for
-    /// control purposes. A control string consists of an opening delimiter, a command string or character string, and
-    /// a terminating delimiter, the String Terminator ([`ST`][c1::ST]).
-    ///
-    /// The control strings are defined in the module [control_strings].
-    ControlString,
 }
 
 impl fmt::Debug for ControlFunctionType {
@@ -159,7 +149,6 @@ impl fmt::Debug for ControlFunctionType {
             ControlFunctionType::IndependentControlFunction => {
                 write!(f, "Independent Control Function")
             }
-            ControlFunctionType::ControlString => write!(f, "Control String"),
         }
     }
 }
@@ -241,9 +230,6 @@ impl fmt::Display for ControlFunction {
             ControlFunctionType::IndependentControlFunction => {
                 write!(f, "{}{}", c0::ESC, self.value)
             }
-            ControlFunctionType::ControlString => {
-                write!(f, "{}", self.value)
-            }
         }
     }
 }
@@ -295,10 +281,6 @@ mod tests {
         assert_eq!(
             format!("{:?}", ControlFunctionType::IndependentControlFunction),
             "Independent Control Function"
-        );
-        assert_eq!(
-            format!("{:?}", ControlFunctionType::ControlString),
-            "Control String"
         );
     }
 
