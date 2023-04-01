@@ -566,7 +566,7 @@ pub fn EA(s: Option<EraseArea>) -> ControlFunction {
 /// Whether the character positions of protected areas are put into the erased state, or the character positions of
 /// unprotected areas only, depends on the setting of the ERASURE MODE ([`ERM`][crate::modes::ERM]).
 ///
-/// The default value for `n` is `1´.
+/// The default value for `n` is `1`.
 pub fn ECH(n: Option<u32>) -> ControlFunction {
     sequence!(05 / 08, numeric n, default 1)
 }
@@ -1526,7 +1526,7 @@ pub fn SCS(n: u32) -> ControlFunction {
 ///
 /// The active presentation position is not affected by this control function.
 ///
-/// The default value for `n` is `1´.
+/// The default value for `n` is `1`.
 pub fn SD(n: Option<u32>) -> ControlFunction {
     sequence!(05 / 04, numeric n, default 1)
 }
@@ -2062,12 +2062,12 @@ pub fn SPD(
 /// shall occur.
 ///
 /// If the DEVICE COMPONENT SELECT MODE ([`DCSM`][crate::modes::DCSM]) is set to DATA, `SPH` is used to establish at
-/// line position `n´ in the active page (the page that contains the active data position) and subsequent pages in the
+/// line position `n` in the active page (the page that contains the active data position) and subsequent pages in the
 /// data component the position to which the active data position will be moved by subsequent occurrences of FORM FEED
 /// ([`FF`][crate::c0::FF]) in the data stream. It is also the position ahead of which no implicit movement of the
 /// active presentation position shall occur.
 ///
-/// The established position is called the page home position and remains in effect until the next occurrence of ´SPH`
+/// The established position is called the page home position and remains in effect until the next occurrence of `SPH`
 /// in the data stream.
 pub fn SPH(n: u32) -> ControlFunction {
     sequence!(02 / 00, 06 / 09, numeric n)
