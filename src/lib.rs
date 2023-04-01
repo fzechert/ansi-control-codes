@@ -29,14 +29,14 @@
 //!
 //! ```
 //! use ansi::c0::BEL;
-//! print!("{}", BEL);
+//! println!("Let's ring the bell {}", BEL);
 //! ```
 //!
 //! Or to move the cursor to line 5, column 13:
 //!
 //! ```
 //! use ansi::control_sequences::CUP;
-//! print!("{}", CUP(Some(5), Some(13)));
+//! print!("{}", CUP(5.into(), 13.into()));
 //! ```
 //!
 //! It might be necessary in some circumstances to announce the active set of control sequences before they can be used.
@@ -262,6 +262,12 @@ impl fmt::Debug for ControlFunction {
             .field("function", &function)
             .field("parameters", &self.parameters)
             .finish()
+    }
+}
+
+impl From<ControlFunction> for String {
+    fn from(control_function: ControlFunction) -> Self {
+        format!("{}", control_function)
     }
 }
 
