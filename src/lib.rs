@@ -23,7 +23,7 @@
 //! ## Low-Level Control Functions
 //!
 //! The control functions of this library are sorted into several modules. You will find the low-level control functions
-//! in the modules [c0], [c1], [control_sequences], [independent_control_functions], and [control_strings].
+//! in the modules [c0], [c1], [control_sequences], [independent_control_functions]
 //!
 //! The control functions can be put into normal strings. For example, to ring the bell:
 //!
@@ -47,6 +47,13 @@
 //! // announce the C1 control function set, then move to the next line.
 //! print!("{}{}", ANNOUNCER_SEQUENCE, NEL);
 //! ```
+//!
+//! ## High-Level Functions
+//!
+//! For your convenience and ease-of-use of the ansi control codes, some functionality is exposed in wrapper functions.
+//! See the following module documentations for a more in-depth introduction to these functions.
+//!
+//! - Working with control strings in module [control_strings].
 //!
 //! ## Source Material
 //!
