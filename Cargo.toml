@@ -1,7 +1,7 @@
 [package]
 name = "ansi"
 description = "This library contains all ANSI Escape Codes that are defined in the ISO 6429 Standard"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
 
 authors = ["Frank Zechert <rust.frank@zechert.net>"]
@@ -9,8 +9,9 @@ repository = "https://git.zechert.net/fzechert/ansi.git"
 license = "MIT"
 
 # crates.io
-publish = false
+publish = true
 keywords = ["ansi", "escape codes", "ISO 6429", "ECMA 48", "ANSI X3.64"]
 categories = ["command-line-interface"]
+include = ["**/*.rs", "Cargo.toml"]
 
 [dependencies]
