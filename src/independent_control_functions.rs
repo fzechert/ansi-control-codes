@@ -4,6 +4,18 @@
 //! `ESC` is represented by bit combination `01/11` and `Fs` is represented by a bit combination from `06/00` to
 //! `07/14`.
 //!
+//! ## Usage
+//!
+//! You can use the independent control functions inside normal strings, format them with the `format!()` macro, or
+//! print them with the `print!()` and `println!()` macros.
+//!
+//! For example, to disable manual input:
+//!
+//! ```
+//! use ansi::independent_control_functions::DMI;
+//! println!("{}", DMI);
+//! ```
+//!
 //! ## Overview of the Independent Control Functions
 //!
 //! | Row Number | Column `06` | Column `07` |
@@ -68,7 +80,9 @@ pub const INT: ControlFunction = independent!(06 / 01);
 /// `LS1R` is used for code extension purposes. It causes the meaning of the bit combinations following it in the data
 /// stream to be changed.
 ///
-/// The use of `LS1R` is defined in Standard ECMA-35.
+/// The use of `LS1R` is defined in Standard [ECMA-35][ecma-35].
+///
+/// [ecma-35]: https://www.ecma-international.org/wp-content/uploads/ECMA-35_6th_edition_december_1994.pdf
 pub const LS1R: ControlFunction = independent!(07 / 14);
 
 /// Locking-Shift Two.
@@ -76,7 +90,9 @@ pub const LS1R: ControlFunction = independent!(07 / 14);
 /// `LS2` is used for code extension purposes. It causes the meaning of the bit combinations following it in the data
 /// stream to be changed.
 ///
-/// The use of `LS2` is defined in Standard ECMA-35.
+/// The use of `LS2` is defined in Standard [ECMA-35][ecma-35].
+///
+/// [ecma-35]: https://www.ecma-international.org/wp-content/uploads/ECMA-35_6th_edition_december_1994.pdf
 pub const LS2: ControlFunction = independent!(06 / 14);
 
 /// Locking-Shift Two Right.
@@ -84,7 +100,9 @@ pub const LS2: ControlFunction = independent!(06 / 14);
 /// `LS2R` is used for code extension purposes. It causes the meaning of the bit combinations following it in the data
 /// stream to be changed.
 ///
-/// The use of `LS2R` is defined in Standard ECMA-35.
+/// The use of `LS2R` is defined in Standard [ECMA-35][ecma-35].
+///
+/// [ecma-35]: https://www.ecma-international.org/wp-content/uploads/ECMA-35_6th_edition_december_1994.pdf
 pub const LS2R: ControlFunction = independent!(07 / 13);
 
 /// Locking-Shift Three.
@@ -92,7 +110,9 @@ pub const LS2R: ControlFunction = independent!(07 / 13);
 /// `LS3` is used for code extension purposes. It causes the meaning of the bit combinations following it in the data
 /// stream to be changed.
 ///
-/// The use of `LS3` is defined in Standard ECMA-35.
+/// The use of `LS3` is defined in Standard [ECMA-35][ecma-35].
+///
+/// [ecma-35]: https://www.ecma-international.org/wp-content/uploads/ECMA-35_6th_edition_december_1994.pdf
 pub const LS3: ControlFunction = independent!(06 / 15);
 
 /// Locking-Shift Three Right.
@@ -100,7 +120,9 @@ pub const LS3: ControlFunction = independent!(06 / 15);
 /// `LS3R` is used for code extension purposes. It causes the meaning of the bit combinations following it in the data
 /// stream to be changed.
 ///
-/// The use of `LS3R` is defined in Standard ECMA-35.
+/// The use of `LS3R` is defined in Standard [ECMA-35][ecma-35].
+///
+/// [ecma-35]: https://www.ecma-international.org/wp-content/uploads/ECMA-35_6th_edition_december_1994.pdf
 pub const LS3R: ControlFunction = independent!(07 / 12);
 
 /// Reset to Initial State.
