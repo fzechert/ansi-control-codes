@@ -12,6 +12,7 @@ license = "MIT"
 publish = true
 keywords = ["ansi", "escape-codes", "control-codes", "ISO-6429", "ECMA-48"]
 categories = ["command-line-interface"]
-include = ["**/*.rs", "Cargo.toml"]
+include = ["**/*.rs", "Cargo.toml", "README.md"]
+readme = "README.md"
 
 [dependencies]
