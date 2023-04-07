@@ -48,6 +48,16 @@
 //! print!("{}{}", ANNOUNCER_SEQUENCE, NEL);
 //! ```
 //!
+//! ## Categories of control functions
+//!
+//! Most control functions are categorized into different groups. They can be accessed from the module
+//! [categories].
+//!
+//! ```
+//! use ansi_control_codes::categories::format_effectors::{CR, LF};
+//! println!("line1{}{}line2", CR, LF);
+//! ```
+//!
 //! ## High-Level Functions
 //!
 //! For your convenience and ease-of-use of the ansi control codes, some functionality is exposed in wrapper functions.
@@ -266,6 +276,7 @@ impl From<ControlFunction> for String {
 
 pub mod c0;
 pub mod c1;
+pub mod categories;
 pub mod control_sequences;
 pub mod control_strings;
 pub mod independent_control_functions;
