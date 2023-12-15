@@ -172,7 +172,21 @@ impl fmt::Debug for ControlFunctionType {
 
 /// An ansi control function defined in [ECMA-48][ecma-48].
 ///
+/// This struct implements the `PartialEq` trait for String-like types (all types that implement AsRef<str>).
+/// It can be used to compare ControlFunctions with string-like values using `==` or `!=` functions.
+///
+/// Example:
+/// ```
+/// use ansi_control_codes::c0;
+///
+/// let some_string = String::from("\u{001B}");
+/// if (c0::ESC == some_string) {
+///     println!("ESC!")
+/// }
+/// ```
+///
 /// [ecma-48]: https://www.ecma-international.org/publications-and-standards/standards/ecma-48/
+#[derive(PartialEq)]
 pub struct ControlFunction {
     /// The type of the control function.
     function_type: ControlFunctionType,
@@ -237,15 +251,12 @@ impl fmt::Display for ControlFunction {
             ControlFunctionType::C0 => {
                 write!(f, "{}", self.value)
             }
-            ControlFunctionType::C1 => {
+            ControlFunctionType::C1 | ControlFunctionType::IndependentControlFunction => {
                 write!(f, "{}{}", c0::ESC, self.value)
             }
             ControlFunctionType::ControlSequence => {
                 let parameters = self.format_parameters();
                 write!(f, "{}{}{}", c1::CSI, parameters, self.value)
-            }
-            ControlFunctionType::IndependentControlFunction => {
-                write!(f, "{}{}", c0::ESC, self.value)
             }
         }
     }
@@ -274,6 +285,26 @@ impl From<ControlFunction> for String {
     }
 }
 
+impl<T> PartialEq<T> for ControlFunction
+where
+    T: AsRef<str>,
+{
+    fn eq(&self, other: &T) -> bool {
+        let other_str = other.as_ref();
+
+        match self.function_type {
+            ControlFunctionType::C0 => self.value == other_str,
+            ControlFunctionType::C1 | ControlFunctionType::IndependentControlFunction => {
+                if other_str.len() != 2 {
+                    return false;
+                }
+                other_str[0..1] == *c0::ESC.value && other_str[1..2] == *self.value
+            }
+            ControlFunctionType::ControlSequence => self.to_string() == other_str,
+        }
+    }
+}
+
 pub mod c0;
 pub mod c1;
 pub mod categories;
@@ -284,7 +315,10 @@ pub mod modes;
 
 #[cfg(test)]
 mod tests {
-    use crate::c0::BEL;
+    use crate::c0::{BEL, ESC};
+    use crate::c1::CSI;
+    use crate::control_sequences::CNL;
+    use crate::independent_control_functions::INT;
     use crate::ControlFunctionType;
 
     /// Test the debug format of [`ControlFunctionType`].
@@ -313,6 +347,146 @@ mod tests {
         assert_eq!(
             format!("{:?}", crate::control_sequences::CUP(None, Some(10))),
             "ControlFunction { function_type: Control Sequence, function: \"04/08\", parameters: [\"1\", \"10\"] }"
+        );
+    }
+
+    #[test]
+    fn string_equality_c0() {
+        let esc_control = ESC;
+        let esc_str = "\u{001B}";
+        let esc_string = String::from(esc_str);
+
+        assert_eq!(
+            esc_control, esc_control,
+            "Asserting equality between same control codes failed"
+        );
+        assert_eq!(
+            esc_control, esc_str,
+            "Asserting equality between control code and string slice failed"
+        );
+        assert_eq!(
+            esc_control, esc_string,
+            "Asserting equality between control code and string failed"
+        );
+
+        assert!(
+            esc_control == esc_str,
+            "Failed to compare control code and string slice"
+        );
+        assert!(
+            esc_control == esc_string,
+            "Failed to compare control code and string"
+        );
+
+        // this should fail, as ESC and BEL are not equal
+        assert_ne!(
+            esc_control, "\u{0007}",
+            "Different control codes should not be equal"
+        );
+    }
+
+    #[test]
+    fn string_equality_c1() {
+        let csi_control = CSI;
+        let csi_str = "\u{001B}[";
+        let csi_string = String::from(csi_str);
+
+        assert_eq!(
+            csi_control, csi_control,
+            "Asserting equality between same control codes failed"
+        );
+        assert_eq!(
+            csi_control, csi_str,
+            "Asserting equality between control code and string slice failed"
+        );
+        assert_eq!(
+            csi_control, csi_string,
+            "Asserting equality between control code and string failed"
+        );
+
+        assert!(
+            csi_control == csi_str,
+            "Failed to compare control code and string slice"
+        );
+        assert!(
+            csi_control == csi_string,
+            "Failed to compare control code and string"
+        );
+
+        // this should fail, as CSI and OSC are not equal
+        assert_ne!(
+            csi_control, "\u{001B}]",
+            "Different control codes should not be equal"
+        );
+    }
+
+    #[test]
+    fn string_equality_control_sequence() {
+        let cnl_control = CNL(4.into());
+        let cnl_str = "\u{001B}[4E";
+        let cnl_string = String::from(cnl_str);
+
+        assert_eq!(
+            cnl_control, cnl_control,
+            "Asserting equality between same control codes failed"
+        );
+        assert_eq!(
+            cnl_control, cnl_str,
+            "Asserting equality between control code and string slice failed"
+        );
+        assert_eq!(
+            cnl_control, cnl_string,
+            "Asserting equality between control code and string failed"
+        );
+
+        assert!(
+            cnl_control == cnl_str,
+            "Failed to compare control code and string slice"
+        );
+        assert!(
+            cnl_control == cnl_string,
+            "Failed to compare control code and string"
+        );
+
+        // this should fail, as CNL for 4 lines and CNL for 3 lines should differ
+        assert_ne!(
+            cnl_control, "\u{001B}[3E",
+            "Different control codes should not be equal"
+        );
+    }
+
+    #[test]
+    fn string_equality_independent_control_functions() {
+        let icf_control = INT;
+        let icf_str = "\u{001B}a";
+        let icf_string = String::from(icf_str);
+
+        assert_eq!(
+            icf_control, icf_control,
+            "Asserting equality between same control codes failed"
+        );
+        assert_eq!(
+            icf_control, icf_str,
+            "Asserting equality between control code and string slice failed"
+        );
+        assert_eq!(
+            icf_control, icf_string,
+            "Asserting equality between control code and string failed"
+        );
+
+        assert!(
+            icf_control == icf_str,
+            "Failed to compare control code and string slice"
+        );
+        assert!(
+            icf_control == icf_string,
+            "Failed to compare control code and string"
+        );
+
+        // this should fail, as Interrupt and Enable Manual Input are different
+        assert_ne!(
+            icf_control, "\u{001B}b",
+            "Different control codes should not be equal"
         );
     }
 }
