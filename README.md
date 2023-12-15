@@ -7,18 +7,21 @@ This library contains all ANSI Escape Codes that are defined in the [ISO 6429 St
 the international standard that followed from the efforts of aligning the european [ECMA-48 Standard][ecma-48] and
 the american [ANSI X3.64 Standard][ansi-x364].
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a change log between versions of this library.
+
 ## Documentation
 
 Find the latest documentation of this crate at <https://docs.rs/crate/ansi-control-codes/latest>.
 
 ## Source Code Repository
 
-The source code for this library is hosted at <https://git.zechert.net/fzechert/ansi-control-codes>.
+The source code for this library is hosted at <https://github.com/fzechert/ansi-control-codes>.
 
 ## Contribution
 
-Contributions are welcome. Please keep in mind that the source code is not at github, but on my own git server.
-If you want to contribute, feel free to contact me.
+Contributions are welcome.
 
 ## Development / Maintenance Status
 
