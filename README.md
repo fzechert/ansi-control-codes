@@ -13,12 +13,11 @@ Find the latest documentation of this crate at <https://docs.rs/crate/ansi-contr
 
 ## Source Code Repository
 
-The source code for this library is hosted at <https://git.zechert.net/fzechert/ansi-control-codes>.
+The source code for this library is hosted at <https://github.com/fzechert/ansi-control-codes>.
 
 ## Contribution
 
-Contributions are welcome. Please keep in mind that the source code is not at github, but on my own git server.
-If you want to contribute, feel free to contact me.
+Contributions are welcome.
 
 ## Development / Maintenance Status
 
