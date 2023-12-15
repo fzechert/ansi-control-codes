@@ -1,11 +1,11 @@
 [package]
 name = "ansi-control-codes"
 description = "This library contains all ANSI Escape Codes that are defined in the ISO 6429 Standard"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 
 authors = ["Frank Zechert <rust.frank@zechert.net>"]
-repository = "https://git.zechert.net/fzechert/ansi-control-codes.git"
+repository = "https://github.com/fzechert/ansi-control-codes"
 license = "MIT"
 
 # crates.io
