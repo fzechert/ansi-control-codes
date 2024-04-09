@@ -1,0 +1,111 @@
+# Run this workflow for each open PR and commit to master branch.
+# This will perform several checks.
+# Inspired by https://github.com/jonhoo/rust-ci-conf/blob/main/.github/workflows/check.yml
+
+permissions:
+  contents: read
+
+on:
+  # run these checks for all commits on master branch
+  push:
+    branches: [master]
+  # run checks for pull requests
+  pull_request:
+
+# Cancel in-progress builds if a branch or PR is updated while builds are still running for the old commmit
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+name: Check
+
+jobs:
+  # Check if the code is formatted according to rustfmt
+  format:
+    runs-on: ubuntu-latest
+    name: stable rust formatting check
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install stable rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Check code formatting
+        run: cargo fmt --check
+  # Check that the code does not contain any clippy warnings
+  clippy:
+    runs-on: ubuntu-latest
+    name: ${{ matrix.toolchain }} rust clippy lints
+    permissions:
+      contents: read
+      checks: write
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [stable, beta]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install ${{ matrix.toolchain }} rust toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          components: clippy
+      - name: Check for clippy lints
+        uses: giraffate/clippy-action@v1
+        with:
+          reporter: github-pr-check
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+  # Check for semantic versioning violations
+  semver:
+    runs-on: ubuntu-latest
+    name: Semantic versioning violation check
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install stable rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Run cargo-semver-checks
+        uses: obi1kenobi/cargo-semver-checks-action@v2
+  # checks that the code can be documented without errors
+  doc:
+    runs-on: ubuntu-latest
+    name: stable rust doc
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install stable rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Run cargo doc
+        run: cargo doc --no-deps --all-features --document-private-items
+        env:
+          RUSTDOCFLAGS: --cfg docsrs
+  # check that the minimum specified rust versionin the crate is correct
+  msrv:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        msrv: ["1.56.1"] # 2021 edition requires 1.56
+    name: MSRV ubuntu / ${{ matrix.msrv }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install ${{ matrix.msrv }} rust toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.msrv }}
+      - name: cargo ${{ matrix.msrv }} check
+        run: cargo check
