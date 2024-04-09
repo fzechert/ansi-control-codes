@@ -1,0 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /.github
+    schedule.interval: weekly
+  - package-ecosystem: cargo
+    directory: /
+    schedule.interval: weekly
+    ignore:
+      # Minor and Patch version update of dependencies are not relevant
+      # Consumers of the library will have their own Cargo.lock file with whatever
+      # versions they choose.
+      - update-types: ["version-update:semver-minor", "version-update:semver-patch"]
