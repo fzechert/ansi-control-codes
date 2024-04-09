@@ -7,6 +7,10 @@ This library contains all ANSI Escape Codes that are defined in the [ISO 6429 St
 the international standard that followed from the efforts of aligning the european [ECMA-48 Standard][ecma-48] and
 the american [ANSI X3.64 Standard][ansi-x364].
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a change log between versions of this library.
+
 ## Documentation
 
 Find the latest documentation of this crate at <https://docs.rs/crate/ansi-control-codes/latest>.

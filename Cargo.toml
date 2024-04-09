@@ -1,7 +1,7 @@
 [package]
 name = "ansi-control-codes"
 description = "This library contains all ANSI Escape Codes that are defined in the ISO 6429 Standard"
-version = "0.0.5"
+version = "1.0.0"
 edition = "2021"
 
 authors = ["Frank Zechert <rust.frank@zechert.net>"]
@@ -12,7 +12,7 @@ license = "MIT"
 publish = true
 keywords = ["ansi", "escape-codes", "control-codes", "ISO-6429", "ECMA-48"]
 categories = ["command-line-interface"]
-include = ["**/*.rs", "Cargo.toml", "README.md", "LICENSE.txt"]
+include = ["**/*.rs", "Cargo.toml", "README.md", "LICENSE.txt", "CHANGELOG.md"]
 readme = "README.md"
 
 [dependencies]
