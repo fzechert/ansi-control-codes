@@ -96,7 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        msrv: ["1.56.1"] # 2021 edition requires 1.56
+        msrv: ["1.62.1"]
     name: MSRV ubuntu / ${{ matrix.msrv }}
     steps:
       - name: Checkout repository
