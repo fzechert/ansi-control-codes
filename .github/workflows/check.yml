@@ -8,7 +8,7 @@ permissions:
 on:
   # run these checks for all commits on master branch
   push:
-    branches: [master]
+    branches: [master, develop]
   # run checks for pull requests
   pull_request:
 
@@ -23,7 +23,7 @@ jobs:
   # Check if the code is formatted according to rustfmt
   format:
     runs-on: ubuntu-latest
-    name: stable rust formatting check
+    name: Stable rust formatting check
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -79,7 +79,7 @@ jobs:
   # checks that the code can be documented without errors
   doc:
     runs-on: ubuntu-latest
-    name: stable rust doc
+    name: Stable rust doc
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

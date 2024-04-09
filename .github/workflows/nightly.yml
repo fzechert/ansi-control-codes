@@ -1,0 +1,64 @@
+# Run scheduled (rolling) jobs on a nightly basis
+# Inspired by https://github.com/jonhoo/rust-ci-conf/blob/main/.github/workflows/scheduled.yml
+permissions:
+  contents: read
+
+on:
+  # run if commits on develop or master
+  push:
+    branches: [develop, master]
+  # run on pull requests
+  pull_request:
+  # run every night
+  schedule:
+    - cron:  '3 15 * * *'
+  # allow manual run
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+name: Nightly Checks
+jobs:
+  # Build against nightly
+  nightly:
+    runs-on: ubuntu-latest
+    name: Check against nightly rust tool chain with existing lock file
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install rust nightly toolchain
+        uses: dtolnay/rust-toolchain@nightly
+      - name: Generate Cargo.lock file if it does not exist
+        if: hashFiles('Cargo.lock') == ''
+        run: cargo generate-lockfile
+      - name: Run tests against versions pinned in the lock file
+        run: cargo test --locked --all-features --all-targets
+  # https://twitter.com/alcuadrado/status/1571291687837732873
+  update:
+    # This action checks that updating the dependencies of this crate to the latest available that
+    # satisfy the versions in Cargo.toml does not break this crate. This is important as consumers
+    # of this crate will generally use the latest available crates.
+    runs-on: ubuntu-latest
+    name: Check against most up-to-date dependencies
+    # There's no point running this if no Cargo.lock was checked in in the first place, since we'd
+    # just redo what happened in the regular test job.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install rust beta toolchain
+        if: hashFiles('Cargo.lock') != ''
+        uses: dtolnay/rust-toolchain@beta
+      - name: Update the cargo lock file
+        if: hashFiles('Cargo.lock') != ''
+        run: cargo update
+      - name: Run tests against versions pinned in the lock file
+        if: hashFiles('Cargo.lock') != ''
+        run: cargo test --locked --all-features --all-targets
+        env:
+          RUSTFLAGS: -D deprecated
