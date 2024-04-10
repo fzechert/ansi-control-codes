@@ -19,6 +19,9 @@ Find the latest documentation of this crate at <https://docs.rs/crate/ansi-contr
 
 The source code for this library is hosted at <https://github.com/fzechert/ansi-control-codes>.
 
+Development of the next version happens in the `develop` branch.
+The `master` branch contains the latest release of the crate.
+
 ## Contribution
 
 Contributions are welcome.
