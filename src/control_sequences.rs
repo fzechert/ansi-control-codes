@@ -159,7 +159,7 @@ macro_rules! sequence {
 /// preceding character tabulation stop in the presentation component, according to the character path.
 ///
 /// Default value for `n` is `1`.
-pub fn CBT(n: Option<u32>) -> ControlFunction {
+pub fn CBT(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(05 / 10, numeric n, default 1)
 }
 
@@ -169,7 +169,7 @@ pub fn CBT(n: Option<u32>) -> ControlFunction {
 /// presentation component.
 ///
 /// Default value for `n` is `1`.
-pub fn CHA(n: Option<u32>) -> ControlFunction {
+pub fn CHA(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(04 / 07, numeric n, default 1)
 }
 
@@ -179,7 +179,7 @@ pub fn CHA(n: Option<u32>) -> ControlFunction {
 /// following character tabulation stop in the presentation component, according to the character path.
 ///
 /// Default value for `n` is `1`.
-pub fn CHT(n: Option<u32>) -> ControlFunction {
+pub fn CHT(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(04 / 09, numeric n, default 1)
 }
 
@@ -189,7 +189,7 @@ pub fn CHT(n: Option<u32>) -> ControlFunction {
 /// line in the presentation component.
 ///
 /// Default value for `n` is `1`.
-pub fn CNL(n: Option<u32>) -> ControlFunction {
+pub fn CNL(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(04 / 05, numeric n, default 1)
 }
 
@@ -199,7 +199,7 @@ pub fn CNL(n: Option<u32>) -> ControlFunction {
 /// line in the presentation component.
 ///
 /// Default value for `n` is `1`.
-pub fn CPL(n: Option<u32>) -> ControlFunction {
+pub fn CPL(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(04 / 06, numeric n, default 1)
 }
 
@@ -216,7 +216,7 @@ pub fn CPL(n: Option<u32>) -> ControlFunction {
 /// `CPR` may be solicited by a DEVICE STATUS REPORT ([`DSR`]) or be sent unsolicited.
 ///
 /// Default value for `n` and `m` is `1`.
-pub fn CPR(n: Option<u32>, m: Option<u32>) -> ControlFunction {
+pub fn CPR(n: Option<u32>, m: Option<u32>) -> ControlFunction<'static> {
     sequence!(05 / 02, numeric n, default 1, numeric m, default 1)
 }
 
@@ -252,7 +252,7 @@ pub enum TabulationControl {
 /// parameter value.
 ///
 /// Default value for `s` is [`TabulationControl::SetCharacterTabulationStop`].
-pub fn CTC(s: Option<TabulationControl>) -> ControlFunction {
+pub fn CTC(s: Option<TabulationControl>) -> ControlFunction<'static> {
     sequence!(05 / 07, selective default s)
 }
 
@@ -262,7 +262,7 @@ pub fn CTC(s: Option<TabulationControl>) -> ControlFunction {
 /// positions, if the character path is horizontal, or by `n` line positions if the character path is vertical.
 ///
 /// Default value for `n` is `1`.
-pub fn CUB(n: Option<u32>) -> ControlFunction {
+pub fn CUB(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(04 / 04, numeric n, default 1)
 }
 
@@ -272,7 +272,7 @@ pub fn CUB(n: Option<u32>) -> ControlFunction {
 /// positions, if the character path is horizontal, or by `n` character positions if the character path is vertical.
 ///
 /// Default value for `n` is `1`.
-pub fn CUD(n: Option<u32>) -> ControlFunction {
+pub fn CUD(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(04 / 02, numeric n, default 1)
 }
 
@@ -282,7 +282,7 @@ pub fn CUD(n: Option<u32>) -> ControlFunction {
 /// positions, if the character path is horizontal, or by `n` line positions if the character path is vertical.
 ///
 /// Default value for `n` is `1`.
-pub fn CUF(n: Option<u32>) -> ControlFunction {
+pub fn CUF(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(04 / 03, numeric n, default 1)
 }
 
@@ -292,7 +292,7 @@ pub fn CUF(n: Option<u32>) -> ControlFunction {
 /// according to the line progression, and to the `m`-th character position according to the character path.
 ///
 /// Default value for `n` and `m` is `1`.
-pub fn CUP(n: Option<u32>, m: Option<u32>) -> ControlFunction {
+pub fn CUP(n: Option<u32>, m: Option<u32>) -> ControlFunction<'static> {
     sequence!(04 / 08, numeric n, default 1, numeric m, default 1)
 }
 
@@ -302,7 +302,7 @@ pub fn CUP(n: Option<u32>, m: Option<u32>) -> ControlFunction {
 /// positions, if the character path is horizontal, or by `n` character positions if the character path is vertical.
 ///
 /// Default value for `n` is `1`.
-pub fn CUU(n: Option<u32>) -> ControlFunction {
+pub fn CUU(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(04 / 01, numeric n, default 1)
 }
 
@@ -312,7 +312,7 @@ pub fn CUU(n: Option<u32>) -> ControlFunction {
 /// the `n`-th following line tabulation stop in the presentation component.
 ///
 /// Default value for `n` is `1`.
-pub fn CVT(n: Option<u32>) -> ControlFunction {
+pub fn CVT(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(05 / 09, numeric n, default 1)
 }
 
@@ -336,7 +336,7 @@ pub enum DeviceAttributes {
 /// If the parameter value is [`DeviceAttributes::Request`], `DA` is used to request an identifying `DA` from a device.
 ///
 /// Default value for `s` is [`DeviceAttributes::Request`].
-pub fn DA(s: Option<DeviceAttributes>) -> ControlFunction {
+pub fn DA(s: Option<DeviceAttributes>) -> ControlFunction<'static> {
     let v = match s {
         Some(DeviceAttributes::Request) => 0,
         Some(DeviceAttributes::Identify(x)) => x,
@@ -404,7 +404,7 @@ pub enum AreaQualification {
 ///
 /// The control functions for area definitions ([`DAQ`], [`EPA`][crate::c1::EPA], [`ESA`][crate::c1::ESA],
 /// [`SPA`][crate::c1::SPA], [`SSA`][crate::c1::SSA]) should not be used within an [`SRS`] string or an [`SDS`] string.
-pub fn DAQ(s: Option<AreaQualification>) -> ControlFunction {
+pub fn DAQ(s: Option<AreaQualification>) -> ControlFunction<'static> {
     sequence!(06 / 15, selective default s)
 }
 
@@ -429,7 +429,7 @@ pub fn DAQ(s: Option<AreaQualification>) -> ControlFunction {
 /// position. At the other end of the shifted part, `n` character positions are put into the erased state.
 ///
 /// Default value for `n` is `1`.
-pub fn DCH(n: Option<u32>) -> ControlFunction {
+pub fn DCH(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(05 / 00, numeric n, default 1)
 }
 
@@ -460,7 +460,7 @@ pub fn DCH(n: Option<u32>) -> ControlFunction {
 /// SET LINE HOME ([`SLH`]).
 ///
 /// The default value for `n` is `1`.
-pub fn DL(n: Option<u32>) -> ControlFunction {
+pub fn DL(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(04 / 13, numeric n, default 1)
 }
 
@@ -503,7 +503,7 @@ pub enum DeviceStatusReport {
 /// ([`MW`][crate::c1::MW]).
 ///
 /// The default value for `s` is [`DeviceStatusReport::Ready`].
-pub fn DSR(s: Option<DeviceStatusReport>) -> ControlFunction {
+pub fn DSR(s: Option<DeviceStatusReport>) -> ControlFunction<'static> {
     sequence!(06 / 14, selective default s)
 }
 
@@ -518,7 +518,7 @@ pub fn DSR(s: Option<DeviceStatusReport>) -> ControlFunction {
 ///
 /// The unit in which the parameter value is expressed is that established by the parameter value of SELECT SIZE UNIT
 /// (`SSU`).
-pub fn DTA(n: u32, m: u32) -> ControlFunction {
+pub fn DTA(n: u32, m: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 04, numeric n, numeric m)
 }
 
@@ -550,7 +550,7 @@ pub enum EraseArea {
 /// unprotected areas only, depends on the setting of ERASURE MODE ([`ERM`][crate::modes::ERM]).
 ///
 /// The default value of `s` is [`EraseArea::ActivePositionToEnd`].
-pub fn EA(s: Option<EraseArea>) -> ControlFunction {
+pub fn EA(s: Option<EraseArea>) -> ControlFunction<'static> {
     sequence!(04 / 15, selective default s)
 }
 
@@ -567,7 +567,7 @@ pub fn EA(s: Option<EraseArea>) -> ControlFunction {
 /// unprotected areas only, depends on the setting of the ERASURE MODE ([`ERM`][crate::modes::ERM]).
 ///
 /// The default value for `n` is `1`.
-pub fn ECH(n: Option<u32>) -> ControlFunction {
+pub fn ECH(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(05 / 08, numeric n, default 1)
 }
 
@@ -599,7 +599,7 @@ pub enum ErasePage {
 /// unprotected areas only, depends on the setting of the ERASURE MODE ([`ERM`][crate::modes::ERM]).
 ///
 /// The default value of `s` is [`ErasePage::ActivePositionToEnd`].
-pub fn ED(s: Option<ErasePage>) -> ControlFunction {
+pub fn ED(s: Option<ErasePage>) -> ControlFunction<'static> {
     sequence!(04 / 10, selective default s)
 }
 
@@ -631,7 +631,7 @@ pub enum EraseField {
 /// unprotected areas only, depends on the setting of the ERASURE MODE ([`ERM`][crate::modes::ERM]).
 ///
 /// The default value for `s` is [`EraseField::ActivePositionToEnd`].
-pub fn EF(s: Option<EraseField>) -> ControlFunction {
+pub fn EF(s: Option<EraseField>) -> ControlFunction<'static> {
     sequence!(04 / 14, selective default s)
 }
 
@@ -663,14 +663,14 @@ pub enum EraseLine {
 /// unprotected areas only, depends on the setting of the ERASURE MODE ([`ERM`][crate::modes::ERM]).
 ///
 /// The default value for `s` is [`EraseLine::ActivePositionToEnd`].
-pub fn EL(s: Option<EraseLine>) -> ControlFunction {
+pub fn EL(s: Option<EraseLine>) -> ControlFunction<'static> {
     sequence!(04 / 11, selective default s)
 }
 
 /// Function Key.
 ///
 /// `FNK` is a control function in which the parameter value identifies the function key which has been operated.
-pub fn FNK(n: u32) -> ControlFunction {
+pub fn FNK(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 07, numeric n)
 }
 
@@ -718,7 +718,7 @@ pub enum Font {
 /// - `t` identifies the character font according to a register which is to be established.
 ///
 /// The default value for `s` is [`Font::Primary`], and for `t` is `0`.
-pub fn FNT(s: Option<Font>, t: Option<u32>) -> ControlFunction {
+pub fn FNT(s: Option<Font>, t: Option<u32>) -> ControlFunction<'static> {
     let a = match s {
         Some(font) => font as u32,
         None => (Font::default()) as u32,
@@ -754,7 +754,7 @@ pub enum GraphicCharacterCombination {
 /// `GCC` does not explicitly specify the relative sizes or placements of the component parts of a composite graphic
 /// symbol. In the simplest case, two components may be "half-width" and side-by-side. For example in Japanese text a
 /// pair of characters may be presented side-by-side, and occupy the space of a normal-size Kanji character.
-pub fn GCC(s: Option<GraphicCharacterCombination>) -> ControlFunction {
+pub fn GCC(s: Option<GraphicCharacterCombination>) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 15, selective default s)
 }
 
@@ -768,7 +768,7 @@ pub fn GCC(s: Option<GraphicCharacterCombination>) -> ControlFunction {
 /// - `w` specifies the width as a percentage of the width established by [`GSS`].
 ///
 /// The default value for `h`, and `w` is `100`.
-pub fn GSM(h: Option<u32>, w: Option<u32>) -> ControlFunction {
+pub fn GSM(h: Option<u32>, w: Option<u32>) -> ControlFunction<'static> {
     sequence!(02 / 00, 04 / 02, numeric h, default 100, numeric w, default 100)
 }
 
@@ -782,7 +782,7 @@ pub fn GSM(h: Option<u32>, w: Option<u32>) -> ControlFunction {
 ///
 /// The unit in which the parameter value is expressed is that established by the parameter value of SELECT SIZE UNIT
 /// ([`SSU`]).
-pub fn GSS(n: u32) -> ControlFunction {
+pub fn GSS(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 04/03, numeric n)
 }
 
@@ -792,7 +792,7 @@ pub fn GSS(n: u32) -> ControlFunction {
 /// component that contains the active data position).
 ///
 /// The default value for `n` is `1`.
-pub fn HPA(n: Option<u32>) -> ControlFunction {
+pub fn HPA(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(06 / 00, numeric n, default 1)
 }
 
@@ -802,7 +802,7 @@ pub fn HPA(n: Option<u32>) -> ControlFunction {
 /// opposite to that of the character progression.
 ///
 /// The default value for `n` is `1`.
-pub fn HPB(n: Option<u32>) -> ControlFunction {
+pub fn HPB(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(06 / 10, numeric n, default 1)
 }
 
@@ -812,7 +812,7 @@ pub fn HPB(n: Option<u32>) -> ControlFunction {
 /// of the character progression.
 ///
 /// The default value for `n` is `1`.
-pub fn HPR(n: Option<u32>) -> ControlFunction {
+pub fn HPR(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(06 / 01, numeric n, default 1)
 }
 
@@ -822,7 +822,7 @@ pub fn HPR(n: Option<u32>) -> ControlFunction {
 /// line progression and to the `m`-th character position according to the character progression.
 ///
 /// The default value for `n` and `m` is `1`.
-pub fn HVP(n: Option<u32>, m: Option<u32>) -> ControlFunction {
+pub fn HVP(n: Option<u32>, m: Option<u32>) -> ControlFunction<'static> {
     sequence!(06 / 06, numeric n, default 1, numeric m, default 1)
 }
 
@@ -851,7 +851,7 @@ pub fn HVP(n: Option<u32>, m: Option<u32>) -> ControlFunction {
 /// home position is/ established by the parameter value of SET LINE HOME ([`SLH`]).
 ///
 /// The default value for `n` is `1`.
-pub fn ICH(n: Option<u32>) -> ControlFunction {
+pub fn ICH(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(04 / 00, numeric n, default 1)
 }
 
@@ -879,7 +879,7 @@ pub enum IdentifyDeviceControlString {
 /// The format and interpretation of the command string corresponding to the parameter `s` are to be defined in
 /// appropriate standards. If this control function is used to identify a private command string, a private parameter
 /// value shall be used [`IdentifyDeviceControlString::Private`].
-pub fn IDCS(s: IdentifyDeviceControlString) -> ControlFunction {
+pub fn IDCS(s: IdentifyDeviceControlString) -> ControlFunction<'static> {
     let v = match s {
         IdentifyDeviceControlString::Private(i) => i,
         IdentifyDeviceControlString::Diagnostic => 1,
@@ -895,7 +895,7 @@ pub fn IDCS(s: IdentifyDeviceControlString) -> ControlFunction {
 /// text.
 ///
 /// The parameter value of `IGS` identifies a graphic character repertoire registered in accordance with ISO/IEC 7350.
-pub fn IGS(n: u32) -> ControlFunction {
+pub fn IGS(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 04 / 13, numeric n)
 }
 
@@ -926,7 +926,7 @@ pub fn IGS(n: u32) -> ControlFunction {
 /// position is established by the parameter value of SET LINE HOME ([`SLH`]).
 ///
 /// The default value for `n` is `1`.
-pub fn IL(n: Option<u32>) -> ControlFunction {
+pub fn IL(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(04 / 12, numeric n, default 1)
 }
 
@@ -973,7 +973,7 @@ pub enum Justification {
 /// established by the parameter value of SET LINE LIMIT ([`SLL`]).
 ///
 /// The default value of `s` is [`Justification::None`].
-pub fn JFY(s: Option<Justification>) -> ControlFunction {
+pub fn JFY(s: Option<Justification>) -> ControlFunction<'static> {
     sequence!(02 / 00, 04 / 06, selective default s)
 }
 
@@ -1012,7 +1012,7 @@ pub enum MediaCopy {
 /// disable the relay of the received data stream to an auxiliary input/output device, depending on the parameter value.
 ///
 /// The default value for `s` is [`MediaCopy::BeginTransferToPrimary`].
-pub fn MC(s: Option<MediaCopy>) -> ControlFunction {
+pub fn MC(s: Option<MediaCopy>) -> ControlFunction<'static> {
     sequence!(06 / 09, selective default s)
 }
 
@@ -1023,7 +1023,7 @@ pub fn MC(s: Option<MediaCopy>) -> ControlFunction {
 /// The effect of this control function on the active presentation position is not defined.
 ///
 /// The default value for `n` is `1`.
-pub fn NP(n: Option<u32>) -> ControlFunction {
+pub fn NP(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(05 / 05, numeric n, default 1)
 }
 
@@ -1050,7 +1050,7 @@ pub enum PresentationExpandContract {
 /// remain in effect until the next occurrence of `PEC`, of [`SCS`], of [`SHS`] or of [`SPI`] in the data stream.
 ///
 /// The default value for `s` is [`PresentationExpandContract::Normal`].
-pub fn PEC(s: Option<PresentationExpandContract>) -> ControlFunction {
+pub fn PEC(s: Option<PresentationExpandContract>) -> ControlFunction<'static> {
     sequence!(02/00, 05/10, selective default s)
 }
 
@@ -1118,7 +1118,7 @@ pub enum PageFormat {
 /// established by the parameter value of SET PAGE LIMIT ([`SPL`]).
 ///
 /// The default value for `s` is [`PageFormat::TallBasicText`].
-pub fn PFS(s: Option<PageFormat>) -> ControlFunction {
+pub fn PFS(s: Option<PageFormat>) -> ControlFunction<'static> {
     sequence!(02/00, 04/10, selective default s)
 }
 
@@ -1128,7 +1128,7 @@ pub fn PFS(s: Option<PageFormat>) -> ControlFunction {
 /// function on the active presentation position is not defined.
 ///
 /// The default for `n` is `1`.
-pub fn PP(n: Option<u32>) -> ControlFunction {
+pub fn PP(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(05 / 06, numeric n, default 1)
 }
 
@@ -1138,7 +1138,7 @@ pub fn PP(n: Option<u32>) -> ControlFunction {
 /// the `n-th` page.
 ///
 /// The default for `n` is `1`.
-pub fn PPA(n: Option<u32>) -> ControlFunction {
+pub fn PPA(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 00, numeric n, default 1)
 }
 
@@ -1148,7 +1148,7 @@ pub fn PPA(n: Option<u32>) -> ControlFunction {
 /// the `n-th` page.
 ///
 /// The default value for `n` is `1`.
-pub fn PPB(n: Option<u32>) -> ControlFunction {
+pub fn PPB(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 02, numeric n, default 1)
 }
 
@@ -1158,7 +1158,7 @@ pub fn PPB(n: Option<u32>) -> ControlFunction {
 /// the `n`-th following page.
 ///
 /// The default value for `n` is `1`.
-pub fn PPR(n: Option<u32>) -> ControlFunction {
+pub fn PPR(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 01, numeric n, default 1)
 }
 
@@ -1226,7 +1226,7 @@ pub enum ParallelText {
 /// or more Hanzi characters and are presented above those Hanzi characters. Alternatively, the Pinyin characters may
 /// be presented in the same line as the Hanzi characters and following the respective Hanzi characters. The Pinyin
 /// characters will then be presented within enclosing paris of parentheses.
-pub fn PTX(s: Option<ParallelText>) -> ControlFunction {
+pub fn PTX(s: Option<ParallelText>) -> ControlFunction<'static> {
     sequence!(05 / 12, selective default s)
 }
 
@@ -1272,7 +1272,7 @@ pub enum Alignment {
 /// established by the parameter value of SET LINE LIMIT ([`SLL`]).
 ///
 /// The default value for `s` is [`Alignment::LineHome`].
-pub fn QUAD(s: Option<Alignment>) -> ControlFunction {
+pub fn QUAD(s: Option<Alignment>) -> ControlFunction<'static> {
     sequence!(02 / 00, 04 / 08, selective default s)
 }
 
@@ -1283,14 +1283,14 @@ pub fn QUAD(s: Option<Alignment>) -> ControlFunction {
 /// a control function or part of a control function, the effect of `REP` is not defined.
 ///
 /// The default value for `n` is `1`.
-pub fn REP(n: Option<u32>) -> ControlFunction {
+pub fn REP(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(06 / 02, numeric n, default 1)
 }
 
 /// Reset Mode.
 ///
 /// `RM` causes the modes of the receiving device to be reset as specified by the parameter values.
-pub fn RM(v: Vec<Mode>) -> ControlFunction {
+pub fn RM(v: Vec<Mode>) -> ControlFunction<'static> {
     sequence!(06 / 12, variadic selective v)
 }
 
@@ -1307,7 +1307,7 @@ pub fn RM(v: Vec<Mode>) -> ControlFunction {
 /// ([`SSU`]).
 ///
 /// The default value for `n` is 0.
-pub fn SACS(n: Option<u32>) -> ControlFunction {
+pub fn SACS(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 12, numeric n, default 0)
 }
 
@@ -1408,7 +1408,7 @@ pub enum PresentationVariant {
 /// `SAPV` is used to specify one or more variants for the presentation of subsequent text.
 ///
 /// The default value for `s` is [`PresentationVariant::Default`].
-pub fn SAPV(s: Option<PresentationVariant>) -> ControlFunction {
+pub fn SAPV(s: Option<PresentationVariant>) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 13, selective default s)
 }
 
@@ -1450,7 +1450,7 @@ pub enum CharacterOrientation {
 /// the character path. The centre of rotation of the affected graphic characters is not default.
 ///
 /// The default value for `s` is [`CharacterOrientation::Normal`].
-pub fn SCO(s: Option<CharacterOrientation>) -> ControlFunction {
+pub fn SCO(s: Option<CharacterOrientation>) -> ControlFunction<'static> {
     sequence!(02 / 00, 06 / 05, selective default s)
 }
 
@@ -1499,7 +1499,7 @@ pub enum CharacterPathScope {
 /// contains the active presentation position) and subsequent lines in the presentation component. It is also used to
 /// update the content of the active line in the presentation component and the content of the active line (the line
 /// that contains the active data position) in the data component. This takes effect immediately.
-pub fn SCP(s: CharacterPath, t: CharacterPathScope) -> ControlFunction {
+pub fn SCP(s: CharacterPath, t: CharacterPathScope) -> ControlFunction<'static> {
     let (n, m) = ((s as u32), (t as u32));
     sequence!(02 / 00, 06 / 11, numeric n, numeric m)
 }
@@ -1514,7 +1514,7 @@ pub fn SCP(s: CharacterPath, t: CharacterPathScope) -> ControlFunction {
 ///
 /// The unit in which the parameter value is expressed is that established by the parameter value of SELECT SIZE UNIT
 /// ([`SSU`]).
-pub fn SCS(n: u32) -> ControlFunction {
+pub fn SCS(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 06 / 07, numeric n)
 }
 
@@ -1527,7 +1527,7 @@ pub fn SCS(n: u32) -> ControlFunction {
 /// The active presentation position is not affected by this control function.
 ///
 /// The default value for `n` is `1`.
-pub fn SD(n: Option<u32>) -> ControlFunction {
+pub fn SD(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(05 / 04, numeric n, default 1)
 }
 
@@ -1576,7 +1576,7 @@ pub enum StringDirection {
 ///
 /// The control functions for area definitions ([`DAQ`], [`EPA`][crate::c1::EPA], [`SPA`][crate::c1::SPA],
 /// [`SSA`][crate::c1::SPA]) should not be used within an `SDS` string.
-pub fn SDS(s: Option<StringDirection>) -> ControlFunction {
+pub fn SDS(s: Option<StringDirection>) -> ControlFunction<'static> {
     sequence!(05 / 13, selective default s)
 }
 
@@ -1607,7 +1607,7 @@ pub enum EditingExtend {
 /// depends on the parameter value.
 ///
 /// The default value for `s` is [`EditingExtend::ActivePage`].
-pub fn SEE(s: Option<EditingExtend>) -> ControlFunction {
+pub fn SEE(s: Option<EditingExtend>) -> ControlFunction<'static> {
     sequence!(05 / 01, selective default s)
 }
 
@@ -1640,7 +1640,7 @@ pub enum Stack {
 ///
 /// The default value for `l` is [`Load::None`].  
 /// The default value for `s` is [`Stack::None`].
-pub fn SEF(l: Option<Load>, s: Option<Stack>) -> ControlFunction {
+pub fn SEF(l: Option<Load>, s: Option<Stack>) -> ControlFunction<'static> {
     let n = match l.unwrap_or(Load::default()) {
         Load::None => 0,
         Load::Bin(bin) => bin,
@@ -1838,7 +1838,7 @@ pub enum GraphicRendition {
 /// ## Note
 ///
 /// The usable combinations of parameter values are determined by the implementation.
-pub fn SGR(s: Option<Vec<GraphicRendition>>) -> ControlFunction {
+pub fn SGR(s: Option<Vec<GraphicRendition>>) -> ControlFunction<'static> {
     let g = s.unwrap_or(vec![Default::default()]);
     sequence!(06 / 13, variadic selective g)
 }
@@ -1876,7 +1876,7 @@ pub enum CharacterSpacing {
 /// data stream.
 ///
 /// The default value for `s` is [`CharacterSpacing::TenCharacters`].
-pub fn SHS(s: Option<CharacterSpacing>) -> ControlFunction {
+pub fn SHS(s: Option<CharacterSpacing>) -> ControlFunction<'static> {
     sequence!(02 / 00, 04 / 11, selective default s)
 }
 
@@ -1897,7 +1897,7 @@ pub enum MovementDirection {
 /// progression. The direction selected remains in effect until the next occurrence of [`SIMD`].
 ///
 /// The default value of `s` is [`MovementDirection::Normal`].
-pub fn SIMD(s: Option<MovementDirection>) -> ControlFunction {
+pub fn SIMD(s: Option<MovementDirection>) -> ControlFunction<'static> {
     sequence!(05 / 14, selective default s)
 }
 
@@ -1910,7 +1910,7 @@ pub fn SIMD(s: Option<MovementDirection>) -> ControlFunction {
 /// The active presentation position is not affected by this control function.
 ///
 /// The default value for `n` is `1`.
-pub fn SL(n: Option<u32>) -> ControlFunction {
+pub fn SL(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(02 / 00, 04 / 00, numeric n, default 1)
 }
 
@@ -1932,7 +1932,7 @@ pub fn SL(n: Option<u32>) -> ControlFunction {
 ///
 /// The established position is called the line home position and remains in effect until the next occurrence of `SLH`
 /// in the data stream.
-pub fn SLH(n: u32) -> ControlFunction {
+pub fn SLH(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 05, numeric n)
 }
 
@@ -1955,7 +1955,7 @@ pub fn SLH(n: u32) -> ControlFunction {
 ///
 /// The established position is called the line limit position and remains in effect until the next occurrence of `SLL`
 /// in the data stream.
-pub fn SLL(n: u32) -> ControlFunction {
+pub fn SLL(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 06, numeric n)
 }
 
@@ -1968,14 +1968,14 @@ pub fn SLL(n: u32) -> ControlFunction {
 ///
 /// The unit in which the parameter value is expressed is that established by the parameter value of SELECT SIZE UNIT
 /// ([`SSU`]).
-pub fn SLS(n: u32) -> ControlFunction {
+pub fn SLS(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 06 / 08, numeric n)
 }
 
 /// Set Mode.
 ///
 /// `SM` causes the modes of the receiving device to be set as specified by the parameter values.
-pub fn SM(s: Vec<Mode>) -> ControlFunction {
+pub fn SM(s: Vec<Mode>) -> ControlFunction<'static> {
     sequence!(06 / 08, variadic selective s)
 }
 
@@ -2048,7 +2048,7 @@ pub enum PresentationDirectionScope {
 pub fn SPD(
     s: Option<PresentationDirection>,
     t: Option<PresentationDirectionScope>,
-) -> ControlFunction {
+) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 03, selective default s, selective default t)
 }
 
@@ -2069,7 +2069,7 @@ pub fn SPD(
 ///
 /// The established position is called the page home position and remains in effect until the next occurrence of `SPH`
 /// in the data stream.
-pub fn SPH(n: u32) -> ControlFunction {
+pub fn SPH(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 06 / 09, numeric n)
 }
 
@@ -2085,7 +2085,7 @@ pub fn SPH(n: u32) -> ControlFunction {
 ///
 /// The unit in which the parameter values are expressed is that established by the parameter value of SELECT SIZE UNIT
 /// ([`SSU`]).
-pub fn SPI(l: u32, c: u32) -> ControlFunction {
+pub fn SPI(l: u32, c: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 04 / 07, numeric l, numeric c)
 }
 
@@ -2103,7 +2103,7 @@ pub fn SPI(l: u32, c: u32) -> ControlFunction {
 ///
 /// The established position is called the page limit position and remains in effect until the next occurrence of `SPL`
 /// in the data stream.
-pub fn SPL(n: u32) -> ControlFunction {
+pub fn SPL(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 06 / 10, numeric n)
 }
 
@@ -2128,7 +2128,7 @@ pub enum PrintQuality {
 /// data stream.
 ///
 /// The default value of `s` is [`PrintQuality::HighQualityLowSpeed`].
-pub fn SPQR(s: Option<PrintQuality>) -> ControlFunction {
+pub fn SPQR(s: Option<PrintQuality>) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 08, selective default s)
 }
 
@@ -2141,7 +2141,7 @@ pub fn SPQR(s: Option<PrintQuality>) -> ControlFunction {
 /// The active presentation position is not affected by this control function.
 ///
 /// The default value for `n` is `1`.
-pub fn SR(n: Option<u32>) -> ControlFunction {
+pub fn SR(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 08, numeric n, default 1)
 }
 
@@ -2159,7 +2159,7 @@ pub fn SR(n: Option<u32>) -> ControlFunction {
 /// ([`SSU`]).
 ///
 /// The default value of `n` is `0`.
-pub fn SRCS(n: Option<u32>) -> ControlFunction {
+pub fn SRCS(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(02 / 00, 06 / 06, numeric n, default 0)
 }
 
@@ -2204,7 +2204,7 @@ pub enum ReversedString {
 ///
 /// The control functions for area definition ([`DAQ`], [`EPA`][crate::c1::EPA], [`ESA`][crate::c1::ESA],
 /// [`SPA`][crate::c1::SPA], [`SSA`][crate::c1::SSA]) should not be used within an `SRS` string.
-pub fn SRS(s: Option<ReversedString>) -> ControlFunction {
+pub fn SRS(s: Option<ReversedString>) -> ControlFunction<'static> {
     sequence!(05 / 11, selective default s)
 }
 
@@ -2246,7 +2246,7 @@ pub enum SizeUnit {
 /// established unit remains in effect until the next occurrence of `SSU` in the data stream.
 ///
 /// Default value of `s` is [`SizeUnit::Character`].
-pub fn SSU(s: Option<SizeUnit>) -> ControlFunction {
+pub fn SSU(s: Option<SizeUnit>) -> ControlFunction<'static> {
     sequence!(02 / 00, 04 / 09, selective default s)
 }
 
@@ -2267,7 +2267,7 @@ pub fn SSU(s: Option<SizeUnit>) -> ControlFunction {
 /// ([`SCS`]) or of SELECT CHARACTER SPACING ([`SHS`]) or of SELECT SPACING INCREMENT ([`SPI`]) in the data stream if
 /// the current font has constant spacing, or is specified by the nominal width of the character `SPACE` in the current
 /// font if that font has proportional spacing.
-pub fn SSW(n: u32) -> ControlFunction {
+pub fn SSW(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 11, numeric n)
 }
 
@@ -2278,7 +2278,7 @@ pub fn SSW(n: u32) -> ControlFunction {
 ///
 /// The use of this control function and means of specifying a list of tabulation stop to be referenced by the control
 /// function are specified in other standards, for example ISO 8613-6.
-pub fn STAB(s: u32) -> ControlFunction {
+pub fn STAB(s: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 05 / 14, numeric s)
 }
 
@@ -2291,7 +2291,7 @@ pub fn STAB(s: u32) -> ControlFunction {
 /// The active presentation position is not affected by this control function.
 ///
 /// The default value for `n` is `1`.
-pub fn SU(n: Option<u32>) -> ControlFunction {
+pub fn SU(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(05 / 03, numeric n, default 1)
 }
 
@@ -2336,7 +2336,7 @@ pub enum LineSpacing {
 /// next occurrence of `SVS` or of SET LINE SPACING ([`SLS`]) or of SPACING INCREMENT ([`SPI`]) in the data stream.
 ///
 /// The default value for `s` is [`LineSpacing::SixLinesPer25`].
-pub fn SVS(s: Option<LineSpacing>) -> ControlFunction {
+pub fn SVS(s: Option<LineSpacing>) -> ControlFunction<'static> {
     sequence!(02 / 00, 04 / 12, selective default s)
 }
 
@@ -2350,7 +2350,7 @@ pub fn SVS(s: Option<LineSpacing>) -> ControlFunction {
 /// A text string centred upon a tabulation stop set by `TAC` will be positioned so that the (trailing edge of the)
 /// first graphic character and the (leading edge of the) last graphic character are at approximately equal distances
 /// from the tabulation stop.
-pub fn TAC(n: u32) -> ControlFunction {
+pub fn TAC(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 06 / 02, numeric n)
 }
 
@@ -2363,7 +2363,7 @@ pub fn TAC(n: u32) -> ControlFunction {
 ///
 /// A text string aligned with a tabulation stop set by `TALE` will be positioned so that the (leading edge of the) last
 /// graphic character of the string is placed at the tabulation stop.
-pub fn TALE(n: u32) -> ControlFunction {
+pub fn TALE(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 06 / 01, numeric n)
 }
 
@@ -2376,7 +2376,7 @@ pub fn TALE(n: u32) -> ControlFunction {
 ///
 /// A text string aligned with a tabulation stop set by `TATE` will be positioned so that the (trailing edge of the)
 /// first graphic character of the string is placed at the tabulation stop.
-pub fn TATE(n: u32) -> ControlFunction {
+pub fn TATE(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 06 / 00, numeric n)
 }
 
@@ -2409,7 +2409,7 @@ pub enum ClearTabulation {
 /// value `s`.
 ///
 /// The default value for `s` is [`ClearTabulation::CharacterTabulationStopActivePosition`].
-pub fn TBC(s: Option<ClearTabulation>) -> ControlFunction {
+pub fn TBC(s: Option<ClearTabulation>) -> ControlFunction<'static> {
     sequence!(06 / 07, selective default s)
 }
 
@@ -2431,7 +2431,7 @@ pub fn TBC(s: Option<ClearTabulation>) -> ControlFunction {
 /// of values is `32` to `127` and `160` to `255`.
 ///
 /// The default value of `m` is `32`.
-pub fn TCC(n: u32, m: Option<u32>) -> ControlFunction {
+pub fn TCC(n: u32, m: Option<u32>) -> ControlFunction<'static> {
     let k = m.unwrap_or(32);
     sequence!(02 / 00, 06 / 03, numeric n, numeric k)
 }
@@ -2442,7 +2442,7 @@ pub fn TCC(n: u32, m: Option<u32>) -> ControlFunction {
 /// active presentation position) and lines of subsequent text in the presentation component to be cleared, but does
 /// not affect other tabulation stops.
 ///
-pub fn TSR(n: u32) -> ControlFunction {
+pub fn TSR(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 06 /04, numeric n)
 }
 
@@ -2455,7 +2455,7 @@ pub fn TSR(n: u32) -> ControlFunction {
 ///
 /// The unit in which the parameter value is expressed is that established by the parameter value of SELECT SIZE UNIT
 /// ([`SSU`]).
-pub fn TSS(n: u32) -> ControlFunction {
+pub fn TSS(n: u32) -> ControlFunction<'static> {
     sequence!(02 / 00, 04 / 05, numeric n)
 }
 
@@ -2465,7 +2465,7 @@ pub fn TSS(n: u32) -> ControlFunction {
 /// parallel to the line progression.
 ///
 /// The default value for `n` is `1`.
-pub fn VPA(n: Option<u32>) -> ControlFunction {
+pub fn VPA(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(06 / 04, numeric n, default 1)
 }
 
@@ -2475,7 +2475,7 @@ pub fn VPA(n: Option<u32>) -> ControlFunction {
 /// opposite to that of the line progression.
 ///
 /// The default value for `n` is `1`.
-pub fn VPB(n: Option<u32>) -> ControlFunction {
+pub fn VPB(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(06 / 11, numeric n, default 1)
 }
 
@@ -2485,6 +2485,6 @@ pub fn VPB(n: Option<u32>) -> ControlFunction {
 /// to the line progression.
 ///
 /// The default value for `n` is `1`.
-pub fn VPR(n: Option<u32>) -> ControlFunction {
+pub fn VPR(n: Option<u32>) -> ControlFunction<'static> {
     sequence!(06 / 05, numeric n, default 1)
 }

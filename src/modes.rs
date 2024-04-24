@@ -499,12 +499,12 @@ pub enum Mode {
 use crate::control_sequences::{RM, SM};
 impl Mode {
     /// Set the mode.
-    pub fn set(self) -> ControlFunction {
+    pub fn set(self) -> ControlFunction<'static> {
         SM(vec![self])
     }
 
     /// Reset the mode.
-    pub fn reset(self) -> ControlFunction {
+    pub fn reset(self) -> ControlFunction<'static> {
         RM(vec![self])
     }
 }
