@@ -93,6 +93,20 @@ jobs:
         run: cargo doc --no-deps --all-features --document-private-items
         env:
           RUSTDOCFLAGS: --cfg docsrs
+  # checks that all tests are good
+  doc:
+    runs-on: ubuntu-latest
+    name: Stable rust test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install stable rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Run cargo test
+        run: cargo test --all-features
+
   # check that the minimum specified rust versionin the crate is correct
   msrv:
     runs-on: ubuntu-latest
