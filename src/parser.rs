@@ -74,17 +74,17 @@ const PARAMETER_SEPARATOR: &str = ascii!(03 / 11);
 /// A `Token` can be obtained by creating a [`TokenStream`] and iterating over it.
 #[derive(Debug, PartialEq, Eq)]
 pub enum Token<'a> {
-    /// A string slice that does not contain any valid ansi-escape-code.
+    /// A string slice that does not contain any valid ansi-control-code.
     String(&'a str),
-    /// A valid ansi-escape-code that was found in the parsed string.
+    /// A valid ansi-control-code that was found in the parsed string.
     ControlFunction(ControlFunction<'a>),
 }
 
 /// A TokenStream is a stream of [`Token`]s that were parsed from an input string.
 /// The TokenStream implements the [`Iterator`] interface, which can be used to extract the result of a parse operation.
 ///
-/// The parse operation can never fail. If invalid ansi-escape-codes are detected in the input string, they will be
-/// emitted as normal Strings ([`Token::String`]). Only valid ansi-escape-codes will be emitted as ControlFunctions
+/// The parse operation can never fail. If invalid ansi-control-codes are detected in the input string, they will be
+/// emitted as normal Strings ([`Token::String`]). Only valid ansi-control-codes will be emitted as ControlFunctions
 /// ([`Token::ControlFunction`]).
 #[derive(Debug)]
 pub struct TokenStream<'a> {

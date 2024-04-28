@@ -20,6 +20,17 @@
 //! A character from the [ASCII table][ascii-table] is represented in the form `xx/yy`, where `xx` represents the column
 //! number `00` to `07` in a 7-bit code table, and `yy` represents the row number `00` to `15`.
 //!
+//! ## Parsing ansi-control-codes
+//!
+//! The module [`parser`] contains a parser that can be used to parse strings and extract any ansi-control-codes
+//! that are present within. To use the parser module, enable the feature `parser`.
+//!
+//! ```text
+//! cargo add ansi-control-codes --features parser
+//! ```
+//!
+//! Refer to the [`parser`]'s module documentation for more details.
+//!
 //! ## Low-Level Control Functions
 //!
 //! The control functions of this library are sorted into several modules. You will find the low-level control functions
