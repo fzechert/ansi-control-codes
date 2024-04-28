@@ -8,7 +8,7 @@ permissions:
 on:
   # run these checks for all commits on master branch
   push:
-    branches: [master]
+    branches: [master, develop]
   # run checks for pull requests
   pull_request:
 
@@ -23,7 +23,7 @@ jobs:
   # Check if the code is formatted according to rustfmt
   format:
     runs-on: ubuntu-latest
-    name: stable rust formatting check
+    name: Stable rust formatting check
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -76,10 +76,12 @@ jobs:
           components: rustfmt
       - name: Run cargo-semver-checks
         uses: obi1kenobi/cargo-semver-checks-action@v2
+        with:
+          package: ansi-control-codes
   # checks that the code can be documented without errors
   doc:
     runs-on: ubuntu-latest
-    name: stable rust doc
+    name: Stable rust doc
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -91,6 +93,20 @@ jobs:
         run: cargo doc --no-deps --all-features --document-private-items
         env:
           RUSTDOCFLAGS: --cfg docsrs
+  # checks that all tests are good
+  test:
+    runs-on: ubuntu-latest
+    name: Stable rust test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install stable rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Run cargo test
+        run: cargo test --all-features
+
   # check that the minimum specified rust versionin the crate is correct
   msrv:
     runs-on: ubuntu-latest

@@ -56,7 +56,7 @@ macro_rules! c1 {
 /// ## Note
 ///
 /// The use of this escape sequence implies that all control function of this C1 set must be implemented.
-pub const ANNOUNCER_SEQUENCE: &'static str = ascii!(01 / 11, 02 / 06, 04 / 00);
+pub const ANNOUNCER_SEQUENCE: &str = ascii!(01 / 11, 02 / 06, 04 / 00);
 
 /// Alternative Announcer Sequence for C1.
 ///
@@ -65,7 +65,7 @@ pub const ANNOUNCER_SEQUENCE: &'static str = ascii!(01 / 11, 02 / 06, 04 / 00);
 /// ## Note
 ///
 /// The use of this escape sequence implies that all control function of this C1 set must be implemented.
-pub const ALTERNATIVE_ANNOUNCER_SEQUENCE: &'static str = ascii!(01 / 11, 02 / 02, 04 / 06);
+pub const ALTERNATIVE_ANNOUNCER_SEQUENCE: &str = ascii!(01 / 11, 02 / 02, 04 / 06);
 
 /// Application Program Command.
 ///

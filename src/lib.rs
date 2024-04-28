@@ -20,6 +20,17 @@
 //! A character from the [ASCII table][ascii-table] is represented in the form `xx/yy`, where `xx` represents the column
 //! number `00` to `07` in a 7-bit code table, and `yy` represents the row number `00` to `15`.
 //!
+//! ## Parsing ansi-control-codes
+//!
+//! The module [`parser`] contains a parser that can be used to parse strings and extract any ansi-control-codes
+//! that are present within. To use the parser module, enable the feature `parser`.
+//!
+//! ```text
+//! cargo add ansi-control-codes --features parser
+//! ```
+//!
+//! Refer to the [`parser`]'s module documentation for more details.
+//!
 //! ## Low-Level Control Functions
 //!
 //! The control functions of this library are sorted into several modules. You will find the low-level control functions
@@ -82,8 +93,9 @@
 //! [ecma-48]: https://www.ecma-international.org/publications-and-standards/standards/ecma-48/
 //! [iso-6429]: https://www.iso.org/standard/12782.html
 //! [wikipedia-ansi]: https://en.wikipedia.org/wiki/ANSI_escape_code
-
-use std::{fmt, str};
+#![deny(missing_debug_implementations, missing_docs)]
+#![allow(clippy::zero_prefixed_literal)]
+use std::{error::Error, fmt, str};
 
 /// Converts the ascii table notation `xx/yy` into a rust string.
 ///
@@ -116,6 +128,46 @@ macro_rules! ascii {
         unsafe { std::str::from_utf8_unchecked(&[$(($xx << 4) + $yy),*]) }
     };
 }
+
+/// Possible errors when specifying a custom control funciton.
+///
+/// It is possible to define custom control functions, so called private-use or experimental functions.
+/// These private-use functions still need to follow some rules. If they violate the rules, one of these
+/// variants is returned as an error.
+#[derive(Debug)]
+pub enum InvalidControlFunction {
+    /// All control function values must be valid ASCII.
+    InvalidAsciiError,
+    /// All control functions must have a one- or two-byte function identifier.
+    InvalidFunctionValueError,
+    /// If the function has an intermediate byte, it must by `02 / 00`. All other intermediate bytes are invalid.
+    InvalidIntermediateByteError,
+    /// All private-use functions must be in the range `07 / 00` to `07 / 15`.
+    InvalidPrivateUseError,
+}
+
+impl fmt::Display for InvalidControlFunction {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            InvalidControlFunction::InvalidAsciiError => {
+                write!(formatter, "Control function must be valid ASCII")
+            }
+            InvalidControlFunction::InvalidFunctionValueError => write!(
+                formatter,
+                "Control function must have one- or two-byte identifier"
+            ),
+            InvalidControlFunction::InvalidIntermediateByteError => {
+                write!(formatter, "Intermediate byte must be 02/00")
+            }
+            InvalidControlFunction::InvalidPrivateUseError => write!(
+                formatter,
+                "Private use functions are only allowed in range 07/00 to 07/15"
+            ),
+        }
+    }
+}
+
+impl Error for InvalidControlFunction {}
 
 /// The different types of control functions.
 ///
@@ -186,19 +238,19 @@ impl fmt::Debug for ControlFunctionType {
 /// ```
 ///
 /// [ecma-48]: https://www.ecma-international.org/publications-and-standards/standards/ecma-48/
-#[derive(PartialEq)]
-pub struct ControlFunction {
+#[derive(PartialEq, Eq)]
+pub struct ControlFunction<'a> {
     /// The type of the control function.
     function_type: ControlFunctionType,
 
     /// The byte or byte combination identifying the control function.
-    value: &'static str,
+    value: &'a str,
 
     /// An arbitrary number of arguments for this control function.
     parameters: Vec<String>,
 }
 
-impl ControlFunction {
+impl<'a> ControlFunction<'a> {
     /// Creates a new control function of type [`C0`][ControlFunctionType::C0].
     ///
     /// `C0` control functions do not accept any parameters.
@@ -222,7 +274,7 @@ impl ControlFunction {
     }
 
     /// Creates a new control function of type [`ControlSequence`][ControlFunctionType::ControlSequence].
-    const fn new_sequence(value: &'static str, parameters: Vec<String>) -> Self {
+    const fn new_sequence(value: &'a str, parameters: Vec<String>) -> Self {
         ControlFunction {
             function_type: ControlFunctionType::ControlSequence,
             value,
@@ -240,12 +292,48 @@ impl ControlFunction {
         }
     }
 
+    /// Creates a new control function representing a control sequence that is declared as private use.
+    ///
+    /// These functions are not standardized and their function is unknown.
+    /// Yet, the standard allows these functions to exist for experimental use.
+    ///
+    /// If the specified value lies outside of the valid private use area, this function will return Err.
+    pub fn private_use(
+        value: &'a str,
+        parameters: Vec<String>,
+    ) -> Result<Self, InvalidControlFunction> {
+        if !value.is_ascii() {
+            return Err(InvalidControlFunction::InvalidAsciiError);
+        }
+        if value.as_bytes().len() > 2 {
+            return Err(InvalidControlFunction::InvalidFunctionValueError);
+        }
+        let function_value = if value.as_bytes().len() == 2 {
+            if &value[0..1] != ascii!(02 / 00) {
+                return Err(InvalidControlFunction::InvalidIntermediateByteError);
+            }
+            &value[1..2]
+        } else {
+            &value[0..1]
+        };
+
+        if function_value.as_bytes()[0] >> 4 != 7 {
+            return Err(InvalidControlFunction::InvalidPrivateUseError);
+        }
+
+        Ok(ControlFunction {
+            function_type: ControlFunctionType::ControlSequence,
+            value,
+            parameters,
+        })
+    }
+
     fn format_parameters(&self) -> String {
         self.parameters.join(ascii!(03 / 11))
     }
 }
 
-impl fmt::Display for ControlFunction {
+impl<'a> fmt::Display for ControlFunction<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self.function_type {
             ControlFunctionType::C0 => {
@@ -262,14 +350,15 @@ impl fmt::Display for ControlFunction {
     }
 }
 
-impl fmt::Debug for ControlFunction {
+impl<'a> fmt::Debug for ControlFunction<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let function: String = self
             .value
             .as_bytes()
-            .into_iter()
+            .iter()
             .map(|b| format!("{:02}/{:02}", b >> 4, (b & 0xF)))
-            .collect();
+            .collect::<Vec<_>>()
+            .join(" ");
 
         f.debug_struct("ControlFunction")
             .field("function_type", &self.function_type)
@@ -279,16 +368,18 @@ impl fmt::Debug for ControlFunction {
     }
 }
 
-impl From<ControlFunction> for String {
+impl<'a> From<ControlFunction<'a>> for String {
     fn from(control_function: ControlFunction) -> Self {
         format!("{}", control_function)
     }
 }
 
-impl<T> PartialEq<T> for ControlFunction
+impl<'a, T> PartialEq<T> for ControlFunction<'a>
 where
     T: AsRef<str>,
 {
+    // comparison for control sequences must be done on the evaluated sequence.
+    #[allow(clippy::cmp_owned)]
     fn eq(&self, other: &T) -> bool {
         let other_str = other.as_ref();
 
@@ -305,6 +396,18 @@ where
     }
 }
 
+impl<'a> PartialEq<ControlFunction<'a>> for &str {
+    fn eq(&self, other: &ControlFunction) -> bool {
+        other == self
+    }
+}
+
+impl<'a> PartialEq<ControlFunction<'a>> for String {
+    fn eq(&self, other: &ControlFunction) -> bool {
+        other == self
+    }
+}
+
 pub mod c0;
 pub mod c1;
 pub mod categories;
@@ -312,6 +415,9 @@ pub mod control_sequences;
 pub mod control_strings;
 pub mod independent_control_functions;
 pub mod modes;
+
+#[cfg(feature = "parser")]
+pub mod parser;
 
 #[cfg(test)]
 mod tests {
