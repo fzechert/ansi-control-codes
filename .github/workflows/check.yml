@@ -94,7 +94,7 @@ jobs:
         env:
           RUSTDOCFLAGS: --cfg docsrs
   # checks that all tests are good
-  doc:
+  test:
     runs-on: ubuntu-latest
     name: Stable rust test
     steps:
