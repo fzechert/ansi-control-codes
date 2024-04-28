@@ -403,6 +403,8 @@ pub mod control_sequences;
 pub mod control_strings;
 pub mod independent_control_functions;
 pub mod modes;
+
+#[cfg(feature = "parser")]
 pub mod parser;
 
 #[cfg(test)]

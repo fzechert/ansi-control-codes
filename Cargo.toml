@@ -17,3 +17,6 @@ include = ["**/*.rs", "Cargo.toml", "README.md", "LICENSE.txt", "CHANGELOG.md"]
 readme = "README.md"
 
 [dependencies]
+
+[features]
+parser = []
