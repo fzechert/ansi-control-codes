@@ -83,6 +83,7 @@
 //! [iso-6429]: https://www.iso.org/standard/12782.html
 //! [wikipedia-ansi]: https://en.wikipedia.org/wiki/ANSI_escape_code
 
+#![allow(clippy::zero_prefixed_literal)]
 use std::{error::Error, fmt, str};
 
 /// Converts the ascii table notation `xx/yy` into a rust string.
@@ -342,7 +343,7 @@ impl<'a> fmt::Debug for ControlFunction<'a> {
         let function: String = self
             .value
             .as_bytes()
-            .into_iter()
+            .iter()
             .map(|b| format!("{:02}/{:02}", b >> 4, (b & 0xF)))
             .collect::<Vec<_>>()
             .join(" ");
@@ -365,6 +366,8 @@ impl<'a, T> PartialEq<T> for ControlFunction<'a>
 where
     T: AsRef<str>,
 {
+    // comparison for control sequences must be done on the evaluated sequence.
+    #[allow(clippy::cmp_owned)]
     fn eq(&self, other: &T) -> bool {
         let other_str = other.as_ref();
 

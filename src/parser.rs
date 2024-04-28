@@ -26,6 +26,17 @@ const C1_CODES: [ControlFunction; 27] = [
 const INDEPDENDENT_CODES: [ControlFunction; 10] =
     [DMI, INT, EMI, RIS, CMD, LS2, LS3, LS3R, LS2R, LS1R];
 
+// control sequences end with characters between 04/00 and 06/15 (07 / 00 - 07 / 15 is also allowed as private-use area).
+const CONTROL_FUNCTION_LOWER_BOUND: u8 = ascii!(04 / 00).as_bytes()[0];
+const CONTROL_FUNCTION_UPPER_BOUND: u8 = ascii!(07 / 15).as_bytes()[0];
+
+// parameter bytes can be between 03 / 00 and 03 / 15.
+const PARAMETER_LOWER_BOUND: u8 = ascii!(03 / 00).as_bytes()[0];
+const PARAMETER_UPPER_BOUND: u8 = ascii!(03 / 15).as_bytes()[0];
+
+// parameter separator
+const PARAMETER_SEPARATOR: &str = ascii!(03 / 11);
+
 /// A Token contains a part of the parsed string. Each part is either a String that does not contain any
 /// ansi-control-codes (represented by [`Token::String`]), or a ansi-control-code (represented by
 /// [`Token::ControlFunction`]).
@@ -46,7 +57,7 @@ pub struct TokenStream<'a> {
 impl<'a> TokenStream<'a> {
     pub fn from(value: &'a str) -> Self {
         TokenStream {
-            value: value,
+            value,
             // invariant: position always points to a valid character boundary inside the string stored in value.
             position: 0,
             max_position: value.len(),
@@ -203,12 +214,10 @@ impl<'a> Iterator for TokenStream<'a> {
 
                     let control_sequence_position = next_next_char_boundary;
 
-                    // control sequences end with characters between 04/00 and 06/15.
-                    let lower_bound = ascii!(04 / 00).as_bytes()[0];
-                    let upper_bound = ascii!(07 / 15).as_bytes()[0];
-                    // parameter bytes can be between 03 / 00 and 03 / 15.
-                    let parameter_lower_bound = ascii!(03 / 00).as_bytes()[0];
-                    let parameter_upper_bound = ascii!(03 / 15).as_bytes()[0];
+                    let lower_bound = CONTROL_FUNCTION_LOWER_BOUND;
+                    let upper_bound = CONTROL_FUNCTION_UPPER_BOUND;
+                    let parameter_lower_bound = PARAMETER_LOWER_BOUND;
+                    let parameter_upper_bound = PARAMETER_UPPER_BOUND;
 
                     let mut intermediate_byte = false;
 
@@ -241,8 +250,7 @@ impl<'a> Iterator for TokenStream<'a> {
                                 &self.value[control_sequence_position..current_position_cs]
                             };
                             let parameters = parameters_unparsed
-                                .split(ascii!(03 / 11))
-                                .into_iter()
+                                .split(PARAMETER_SEPARATOR)
                                 .map(String::from)
                                 .collect();
 

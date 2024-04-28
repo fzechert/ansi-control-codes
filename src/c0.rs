@@ -60,7 +60,7 @@ macro_rules! c0 {
 ///
 /// It is assumed that even with no invoked C0 set, the control character ESCAPE (`ESC`) is available, and is
 /// represented by the bit combination `01/11`.
-pub const ANNOUNCER_SEQUENCE: &'static str = ascii!(01 / 11, 02 / 01, 04 / 00);
+pub const ANNOUNCER_SEQUENCE: &str = ascii!(01 / 11, 02 / 01, 04 / 00);
 
 /// Acknowledge.
 ///

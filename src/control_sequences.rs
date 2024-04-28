@@ -96,14 +96,14 @@ macro_rules! sequence {
     ($xx:literal / $yy:literal, selective default $param:ident) => {
         ControlFunction::new_sequence(
             ascii!($xx / $yy),
-            vec![($param.unwrap_or(Default::default()) as u32).to_string()],
+            vec![($param.unwrap_or_default() as u32).to_string()],
         )
     };
     // selective control sequence with intermediate byte and default value
     ($xx1:literal / $yy1:literal, $xx2:literal / $yy2:literal, selective default $param:ident) => {
         ControlFunction::new_sequence(
             ascii!($xx1 / $yy1, $xx2 / $yy2),
-            vec![($param.unwrap_or(Default::default()) as u32).to_string()],
+            vec![($param.unwrap_or_default() as u32).to_string()],
         )
     };
     // selective control sequence with intermediate byte and two default value
@@ -111,8 +111,8 @@ macro_rules! sequence {
         ControlFunction::new_sequence(
             ascii!($xx1 / $yy1, $xx2 / $yy2),
             vec![
-                ($param1.unwrap_or(Default::default()) as u32).to_string(),
-                ($param2.unwrap_or(Default::default()) as u32).to_string(),
+                ($param1.unwrap_or_default() as u32).to_string(),
+                ($param2.unwrap_or_default() as u32).to_string(),
             ],
         )
     };
@@ -1641,11 +1641,11 @@ pub enum Stack {
 /// The default value for `l` is [`Load::None`].  
 /// The default value for `s` is [`Stack::None`].
 pub fn SEF(l: Option<Load>, s: Option<Stack>) -> ControlFunction<'static> {
-    let n = match l.unwrap_or(Load::default()) {
+    let n = match l.unwrap_or_default() {
         Load::None => 0,
         Load::Bin(bin) => bin,
     };
-    let m = match s.unwrap_or(Stack::default()) {
+    let m = match s.unwrap_or_default() {
         Stack::None => 0,
         Stack::Stacker(stacker) => stacker,
     };
