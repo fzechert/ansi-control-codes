@@ -82,7 +82,7 @@
 //! [ecma-48]: https://www.ecma-international.org/publications-and-standards/standards/ecma-48/
 //! [iso-6429]: https://www.iso.org/standard/12782.html
 //! [wikipedia-ansi]: https://en.wikipedia.org/wiki/ANSI_escape_code
-
+#![deny(missing_debug_implementations, missing_docs)]
 #![allow(clippy::zero_prefixed_literal)]
 use std::{error::Error, fmt, str};
 

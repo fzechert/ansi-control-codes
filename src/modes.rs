@@ -50,7 +50,7 @@
 use crate::ControlFunction;
 
 /// Device Modes.
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Mode {
     /// Guarded Area Transfer Mode `GATM`.
     ///

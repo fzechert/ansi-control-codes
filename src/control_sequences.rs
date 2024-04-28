@@ -221,7 +221,7 @@ pub fn CPR(n: Option<u32>, m: Option<u32>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`CTC`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum TabulationControl {
     /// A character tabulation stop is set at the active presentation position.
     #[default]
@@ -317,7 +317,7 @@ pub fn CVT(n: Option<u32>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`DA`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum DeviceAttributes {
     /// Request identifying device attributes from a device.
     #[default]
@@ -346,7 +346,7 @@ pub fn DA(s: Option<DeviceAttributes>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`DAQ`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum AreaQualification {
     /// Unprotected and unguarded.
     #[default]
@@ -465,7 +465,7 @@ pub fn DL(n: Option<u32>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`DSR`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum DeviceStatusReport {
     /// The device is ready, no malfunction detected
     #[default]
@@ -523,7 +523,7 @@ pub fn DTA(n: u32, m: u32) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`EA`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum EraseArea {
     /// Erase from the active position until the end of the qualified area.
     #[default]
@@ -572,7 +572,7 @@ pub fn ECH(n: Option<u32>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`ED`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ErasePage {
     /// Erase from the active position until the end of the page.
     #[default]
@@ -604,7 +604,7 @@ pub fn ED(s: Option<ErasePage>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`EF`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum EraseField {
     /// Erase from the active position until the end of the field.
     #[default]
@@ -636,7 +636,7 @@ pub fn EF(s: Option<EraseField>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`EL`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum EraseLine {
     /// Erase from the active position until the end of the line.
     #[default]
@@ -675,7 +675,7 @@ pub fn FNK(n: u32) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`FNT`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Font {
     /// Primary font.
     #[default]
@@ -728,7 +728,7 @@ pub fn FNT(s: Option<Font>, t: Option<u32>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`GCC`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum GraphicCharacterCombination {
     /// Combine the following two graphic characters into a single graphic symbol.
     #[default]
@@ -856,7 +856,7 @@ pub fn ICH(n: Option<u32>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`IDCS`].
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum IdentifyDeviceControlString {
     /// Reserved for use with the DIAGNOSTIC state of the STATUS REPORT TRANSFER MODE.
     Diagnostic,
@@ -931,7 +931,7 @@ pub fn IL(n: Option<u32>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`JFY`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Justification {
     /// No justification, end of justification of preceding text.
     #[default]
@@ -978,7 +978,7 @@ pub fn JFY(s: Option<Justification>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`MC`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum MediaCopy {
     /// Initiate transfer to a primary auxiliary device.
     #[default]
@@ -1028,7 +1028,7 @@ pub fn NP(n: Option<u32>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`PEC`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum PresentationExpandContract {
     /// Normal, as specified by [`SCS`], [`SHS`] or [`SPI`].
     #[default]
@@ -1055,7 +1055,7 @@ pub fn PEC(s: Option<PresentationExpandContract>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`PFS`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum PageFormat {
     /// Tall basic text communication format.
     #[default]
@@ -1163,7 +1163,7 @@ pub fn PPR(n: Option<u32>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`PTX`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ParallelText {
     /// End of parallel texts.
     #[default]
@@ -1231,7 +1231,7 @@ pub fn PTX(s: Option<ParallelText>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`QUAD`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Alignment {
     /// Flush to line home position margin.
     #[default]
@@ -1312,7 +1312,7 @@ pub fn SACS(n: Option<u32>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`SAPV`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum PresentationVariant {
     /// Default presentation (implementation-defined); cancels the effect of any preceding occurrence of [`SAPV`] in the
     /// data stream.
@@ -1413,7 +1413,7 @@ pub fn SAPV(s: Option<PresentationVariant>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`SCO`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum CharacterOrientation {
     /// Rotate by 0°, normal orientation.
     #[default]
@@ -1455,7 +1455,7 @@ pub fn SCO(s: Option<CharacterOrientation>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`SCP`].
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CharacterPath {
     /// Left-to-right (in the case of horizontal line orientation), or top-to-bottom (in the case of vertical line
     /// orientation).
@@ -1467,7 +1467,7 @@ pub enum CharacterPath {
 }
 
 /// Valid parameter values to the function [`SCP`].
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CharacterPathScope {
     /// Undefined, implementation specific.
     ///
@@ -1532,7 +1532,7 @@ pub fn SD(n: Option<u32>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`SDS`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum StringDirection {
     /// End of a directed string; re-establish the previous direction.
     #[default]
@@ -1581,7 +1581,7 @@ pub fn SDS(s: Option<StringDirection>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`SEE`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum EditingExtend {
     /// The shifted part is limited to the active page in the presentation component.
     #[default]
@@ -1612,7 +1612,7 @@ pub fn SEE(s: Option<EditingExtend>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`SEF`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Load {
     /// Eject sheet, no new sheet loaded
     #[default]
@@ -1623,7 +1623,7 @@ pub enum Load {
 }
 
 /// Valid parameter values to the function [`SEF`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Stack {
     /// Eject sheet, no stacker specified.
     #[default]
@@ -1653,7 +1653,7 @@ pub fn SEF(l: Option<Load>, s: Option<Stack>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`SGR`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum GraphicRendition {
     /// Default rendition (implementation-defined), cancels the effect of any preceding occurrence of [`SGR`] in the
     /// data stream regardless of the setting of the GRAPHIC RENDITION COMBINATION MODE ([`GRCM`][crate::modes::GRCM]).
@@ -1844,7 +1844,7 @@ pub fn SGR(s: Option<Vec<GraphicRendition>>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`SHS`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum CharacterSpacing {
     /// 10 characters per 25.4 mm.
     #[default]
@@ -1881,7 +1881,7 @@ pub fn SHS(s: Option<CharacterSpacing>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`SIMD`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum MovementDirection {
     /// The direction of implicit movement is the same as that of the character progression.
     #[default]
@@ -1980,7 +1980,7 @@ pub fn SM(s: Vec<Mode>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`SPD`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum PresentationDirection {
     /// Horizontal line orientation, top-to-bottom line progression, left-to-right character path.
     #[default]
@@ -2009,7 +2009,7 @@ pub enum PresentationDirection {
 }
 
 /// Valid parameter values to the function [`SPD`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum PresentationDirectionScope {
     /// Undefined, implementation specific.
     ///
@@ -2108,7 +2108,7 @@ pub fn SPL(n: u32) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`SPQR`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum PrintQuality {
     /// Highest available print quality, low print speed
     #[default]
@@ -2164,7 +2164,7 @@ pub fn SRCS(n: Option<u32>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`SRS`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ReversedString {
     /// End of a reversed string; re-establish the previous direction.
     #[default]
@@ -2209,7 +2209,7 @@ pub fn SRS(s: Option<ReversedString>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`SSU`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum SizeUnit {
     /// The dimension of this unit are device-dependent.
     #[default]
@@ -2296,7 +2296,7 @@ pub fn SU(n: Option<u32>) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`SLS`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum LineSpacing {
     /// Six lines per 25.4 mm.
     #[default]
@@ -2381,7 +2381,7 @@ pub fn TATE(n: u32) -> ControlFunction<'static> {
 }
 
 /// Valid parameter values to the function [`TBC`].
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ClearTabulation {
     /// Clear the character tabulation stop at the active presentation position.
     #[default]
