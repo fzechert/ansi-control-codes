@@ -5,7 +5,7 @@
 //! device transmits, receives, processes, or images data. Each mode has two states. The reset state, and the set state.
 //!
 //! The states of the modes may be established explicitly in the data stream by the control functions SET MODE
-//! ([`SM`][crate::control_sequences::SM]) and RESET MODE ([`RM`][crate::control_sequences::RM]) or may be established
+//! ([`SM`]) and RESET MODE ([`RM`]) or may be established
 //! by agreement between sender and recipient. In an implementation, some or all of the modes have one state only.
 //!
 //! To ensure data compatibility and ease of interchange with a variety of equipment the use of modes is deprecated. If
@@ -19,8 +19,8 @@
 //!
 //! ### Directly invoking `SM` or `RM` Control Functions
 //!
-//! You can pass modes to the arguments of the control functions SET MODE ([`SM`][crate::control_sequences::SM]) and
-//! RESET MODE ([`RM`][crate::control_sequences::RM]).
+//! You can pass modes to the arguments of the control functions SET MODE ([`SM`]) and
+//! RESET MODE ([`RM`]).
 //!
 //! ```
 //! use ansi_control_codes::control_sequences;

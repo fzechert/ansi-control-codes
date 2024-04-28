@@ -281,8 +281,9 @@ impl<'a> ControlFunction<'a> {
         }
     }
 
-    /// Creates a new control function of type [`ControlSequence`][ControlFunctionType::ControlSequence] with a
-    /// function that is declared as private use. These functions are not standardized and their function is unknown.
+    /// Creates a new control function representing a control sequence that is declared as private use.
+    ///
+    /// These functions are not standardized and their function is unknown.
     /// Yet, the standard allows these functions to exist for experimental use.
     ///
     /// If the specified value lies outside of the valid private use area, this function will return Err.

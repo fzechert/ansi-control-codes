@@ -2,21 +2,21 @@
 //!
 //! A control string is a string of bit combinations which may occur in the data stream as a logical entity for
 //! control purposes. A control string consists of an opening delimiter, a command string or a character string,
-//! and a terminating delimiter, the STRING TERMINATOR ([`ST`][crate::c1::ST]).
+//! and a terminating delimiter, the STRING TERMINATOR ([`ST`]).
 //!
 //! A command string is a sequence of bit combinations in the range `00/08` to `00/13` and `02/00` to `07/14`.
 //!
 //! A character string is a sequence of any bit combination, except those representing START OF STRING
-//! ([`SOS`][crate::c1::SOS]) or STRING TERMINATOR ([`ST`][crate::c1::ST]).
+//! ([`SOS`]) or STRING TERMINATOR ([`ST`]).
 //!
 //! The low-level ansi control codes for control strings are defined in the module [`c1`][crate::c1].
 //!
-//! - APPLICATION PROGRAM COMMAND ([`APC`][crate::c1::APC])
-//! - DEVICE CONTROL STRING ([`DCS`][crate::c1::DCS])
-//! - OPERATING SYSTEM COMMAND ([`OSC`][crate::c1::OSC])
-//! - PRIVACY MESSAGE ([`PM`][crate::c1::PM])
-//! - START OF STRING ([`SOS`][crate::c1::SOS])
-//! - STRING TERMINATOR ([`ST`][crate::c1::ST])
+//! - APPLICATION PROGRAM COMMAND ([`APC`])
+//! - DEVICE CONTROL STRING ([`DCS`])
+//! - OPERATING SYSTEM COMMAND ([`OSC`])
+//! - PRIVACY MESSAGE ([`PM`])
+//! - START OF STRING ([`SOS`])
+//! - STRING TERMINATOR ([`ST`])
 //!
 //! This module contains higher level functions to invoke these low-level ansi control codes.
 //!
