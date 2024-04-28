@@ -1,40 +1,70 @@
 //! # Parser for ansi-control-codes
 //!
 //! This module contains a parser implementation that can be used to parse string-like types into a sequence
-//! of ansi-control-codes (represented by [`ControlFunction`]s and strings that do not contain any ansi-control-codes.
+//! of ansi-control-codes (represented by [`ControlFunction`]s) and strings that do not contain any ansi-control-codes.
 //!
-//! The parser uses owned types, and therefore is not really suitable to parse very big strings.
+//! To use the parser module, enable the feature `parser` in your `Cargo.toml`.  
+//!
+//! ```text
+//! cargo add ansi-control-codes --features parser
+//! ```
 //!
 //! ## Example Usage
 //!
+//! ```
+//! use ansi_control_codes::c1::NEL;
+//! use ansi_control_codes::parser::{TokenStream, Token};
 //!
+//! let to_be_parsed = format!("This text{}is spread across{}multiple lines.", NEL, NEL);
+//! let parsed = TokenStream::from(&to_be_parsed);
 //!
+//! let parts: Vec<Token> = parsed.collect();
+//! println!("{:?}", parts);
 //!
+//! assert_eq!(parts[0], Token::String("This text"));
+//! assert_eq!(parts[1], Token::ControlFunction(NEL));
+//! assert_eq!(parts[2], Token::String("is spread across"));
+//! assert_eq!(parts[3], Token::ControlFunction(NEL));
+//! assert_eq!(parts[4], Token::String("multiple lines."));
+//! ```
 
 use crate::{c0::*, c1::*, independent_control_functions::*, ControlFunction};
 
+/// All C0 Codes that can be parsed without any lookahaed (all C0 codes except for ESC)
 const C0_CODES: [ControlFunction; 31] = [
     ACK, BEL, BS, CAN, CR, DC1, DC2, DC3, DC4, DLE, EM, ENQ, EOT, ETB, ETX, FF, HT, IS1, IS2, IS3,
     IS4, LF, NAK, NUL, SI, SO, SOH, STX, SUB, SYN, VT,
 ];
 
+/// All C1 Codes that can be parsed without any lookahaed (all C1 codes except for CSI)
 const C1_CODES: [ControlFunction; 27] = [
     BPH, NBH, NEL, SSA, ESA, HTS, HTJ, VTS, PLD, PLU, RI, SS2, SS3, DCS, PU1, PU2, STS, CCH, MW,
     SPA, EPA, SOS, SCI, ST, OSC, PM, APC,
 ];
 
+/// All independent control codes.
 const INDEPDENDENT_CODES: [ControlFunction; 10] =
     [DMI, INT, EMI, RIS, CMD, LS2, LS3, LS3R, LS2R, LS1R];
 
-// control sequences end with characters between 04/00 and 06/15 (07 / 00 - 07 / 15 is also allowed as private-use area).
+/// Lower bound of valid characters for control function values.
+/// Control sequences end with characters between 04/00 and 06/15
+/// (07 / 00 - 07 / 15 is also allowed as private-use area).
 const CONTROL_FUNCTION_LOWER_BOUND: u8 = ascii!(04 / 00).as_bytes()[0];
+
+/// Upper bound of valid characters for control function values.
+/// Control sequences end with characters between 04/00 and 06/15
+/// (07 / 00 - 07 / 15 is also allowed as private-use area).
 const CONTROL_FUNCTION_UPPER_BOUND: u8 = ascii!(07 / 15).as_bytes()[0];
 
-// parameter bytes can be between 03 / 00 and 03 / 15.
+/// Lower bound of valid parameter bytes.
+/// Parameter bytes can be between 03 / 00 and 03 / 15.
 const PARAMETER_LOWER_BOUND: u8 = ascii!(03 / 00).as_bytes()[0];
+
+/// Upper bound of valid parameter bytes.
+/// Parameter bytes can be between 03 / 00 and 03 / 15.
 const PARAMETER_UPPER_BOUND: u8 = ascii!(03 / 15).as_bytes()[0];
 
-// parameter separator
+/// Parameter separator byte.
 const PARAMETER_SEPARATOR: &str = ascii!(03 / 11);
 
 /// A Token contains a part of the parsed string. Each part is either a String that does not contain any
@@ -44,10 +74,19 @@ const PARAMETER_SEPARATOR: &str = ascii!(03 / 11);
 /// A `Token` can be obtained by creating a [`TokenStream`] and iterating over it.
 #[derive(Debug, PartialEq, Eq)]
 pub enum Token<'a> {
+    /// A string slice that does not contain any valid ansi-escape-code.
     String(&'a str),
+    /// A valid ansi-escape-code that was found in the parsed string.
     ControlFunction(ControlFunction<'a>),
 }
 
+/// A TokenStream is a stream of [`Token`]s that were parsed from an input string.
+/// The TokenStream implements the [`Iterator`] interface, which can be used to extract the result of a parse operation.
+///
+/// The parse operation can never fail. If invalid ansi-escape-codes are detected in the input string, they will be
+/// emitted as normal Strings ([`Token::String`]). Only valid ansi-escape-codes will be emitted as ControlFunctions
+/// ([`Token::ControlFunction`]).
+#[derive(Debug)]
 pub struct TokenStream<'a> {
     value: &'a str,
     position: usize,
@@ -55,6 +94,9 @@ pub struct TokenStream<'a> {
 }
 
 impl<'a> TokenStream<'a> {
+    /// Parse the given string `value` into a [`TokenStream`].
+    ///
+    /// The [`TokenStream`] can be iterated over to inspect the result of the parse operation.
     pub fn from(value: &'a str) -> Self {
         TokenStream {
             value,
