@@ -250,7 +250,7 @@ pub struct ControlFunction<'a> {
     parameters: Vec<String>,
 }
 
-impl<'a> ControlFunction<'a> {
+impl ControlFunction<'static> {
     /// Creates a new control function of type [`C0`][ControlFunctionType::C0].
     ///
     /// `C0` control functions do not accept any parameters.
@@ -273,15 +273,6 @@ impl<'a> ControlFunction<'a> {
         }
     }
 
-    /// Creates a new control function of type [`ControlSequence`][ControlFunctionType::ControlSequence].
-    const fn new_sequence(value: &'a str, parameters: Vec<String>) -> Self {
-        ControlFunction {
-            function_type: ControlFunctionType::ControlSequence,
-            value,
-            parameters,
-        }
-    }
-
     /// Creates a new control function of type
     /// [`IndependentControlFunction`][ControlFunctionType::IndependentControlFunction].
     const fn new_independent_control_function(value: &'static str) -> Self {
@@ -289,6 +280,17 @@ impl<'a> ControlFunction<'a> {
             function_type: ControlFunctionType::IndependentControlFunction,
             value,
             parameters: vec![],
+        }
+    }
+}
+
+impl<'a> ControlFunction<'a> {
+    /// Creates a new control function of type [`ControlSequence`][ControlFunctionType::ControlSequence].
+    const fn new_sequence(value: &'a str, parameters: Vec<String>) -> Self {
+        ControlFunction {
+            function_type: ControlFunctionType::ControlSequence,
+            value,
+            parameters,
         }
     }
 
