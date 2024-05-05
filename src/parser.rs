@@ -27,23 +27,74 @@
 //! assert_eq!(parts[3], Token::ControlFunction(NEL));
 //! assert_eq!(parts[4], Token::String("multiple lines."));
 //! ```
+//!
+//! ## Parse and Explain
+//!
+//! You can combine the features `parser` and `explain` of this crate to parse text and explain the meaning of
+//! control functions. Also check the [Explain-Module][crate::explain].
+//!
+//! ```
+//! use ansi_control_codes::c1::NEL;
+//! use ansi_control_codes::parser::{TokenStream, Token};
+//! use ansi_control_codes::explain::Explain;
+//!
+//! let example = "\x1b[0u\x1b[62c\x1b[23;6H";
+//! let result = TokenStream::from(&example).collect::<Vec<Token>>();
+//!
+//! for (i, part) in result.iter().enumerate() {
+//!     match part {
+//!         Token::String(string) => println!("{}. Normal String: {}", i, string),
+//!         Token::ControlFunction(control_function) => {
+//!             println!(
+//!                 "{}. Control Function: {} ({})",
+//!                 i,
+//!                 control_function.short_name().unwrap_or_default(),
+//!                 control_function.long_name()
+//!             );
+//!             println!(
+//!                 "Short description: {}",
+//!                 control_function.short_description()
+//!             );
+//!             println!("Long description: {}", control_function.long_description());
+//!         }
+//!     }
+//!     if i < (result.len() - 1) {
+//!         println!("---------------------");
+//!     }
+//! }
+//! ```
+//! This will produce the following output
+//! ```text
+//! 0. Control Function:  (Private Use / Experimental Use)
+//! Short description: Reserved for private use / not standardized.
+//! Long description: Reserved for private use / not standardized.
+//! ---------------------
+//! 1. Control Function: DA (Device Attributes)
+//! Short description: The device sending this identifies as device with code 62.
+//! Long description: The device sending this identifies as device with code 62.
+//! ---------------------
+//! 2. Control Function: CUP (Cursor Position)
+//! Short description: Move the active position to line 23 and character 6.
+//! Long description: Causes the active presentation position to be moved in the presentation component to the 23rd line
+//! position according to the line progression, and to the 6 character position according to the character path.
+//! ```
 
 use crate::{c0::*, c1::*, independent_control_functions::*, ControlFunction};
 
-/// All C0 Codes that can be parsed without any lookahaed (all C0 codes except for ESC)
+/// All C0 Codes that can be parsed without any lookahead (all C0 codes except for ESC)
 const C0_CODES: [ControlFunction; 31] = [
     ACK, BEL, BS, CAN, CR, DC1, DC2, DC3, DC4, DLE, EM, ENQ, EOT, ETB, ETX, FF, HT, IS1, IS2, IS3,
     IS4, LF, NAK, NUL, SI, SO, SOH, STX, SUB, SYN, VT,
 ];
 
-/// All C1 Codes that can be parsed without any lookahaed (all C1 codes except for CSI)
+/// All C1 Codes that can be parsed without any lookahead (all C1 codes except for CSI)
 const C1_CODES: [ControlFunction; 27] = [
     BPH, NBH, NEL, SSA, ESA, HTS, HTJ, VTS, PLD, PLU, RI, SS2, SS3, DCS, PU1, PU2, STS, CCH, MW,
     SPA, EPA, SOS, SCI, ST, OSC, PM, APC,
 ];
 
 /// All independent control codes.
-const INDEPDENDENT_CODES: [ControlFunction; 10] =
+const INDEPENDENT_CODES: [ControlFunction; 10] =
     [DMI, INT, EMI, RIS, CMD, LS2, LS3, LS3R, LS2R, LS1R];
 
 /// Lower bound of valid characters for control function values.
@@ -152,7 +203,7 @@ impl<'a> Iterator for TokenStream<'a> {
             }
 
             // when encountering an ASCII character, this might be beginning, or part of an already started
-            // ansci-control-code. It also might just be a normal ascii character that has nothing to do with any
+            // ansi-control-code. It also might just be a normal ascii character that has nothing to do with any
             // ansi-control-code.
 
             // All c0 control codes are 1 character long and can be identified directly, except for ESC which might
@@ -234,7 +285,7 @@ impl<'a> Iterator for TokenStream<'a> {
                 // Handle Independent Control Functions
                 // All Independent Control Functions are 1 character long, and can be identified directly.
                 // All Independent control functions are stored in the array INDEPENDENT_CODES
-                if let Some(ansi_control_code) = INDEPDENDENT_CODES
+                if let Some(ansi_control_code) = INDEPENDENT_CODES
                     .into_iter()
                     .find(|independent_code| independent_code == &control_sequence)
                 {
@@ -325,7 +376,7 @@ impl<'a> Iterator for TokenStream<'a> {
                         // this does not end the control function
                         // check the next character (or exit, if there are no more characters).
                         if next_position_cs == self.max_position {
-                            // nothing else to do anymore, reached end of string, this can't be valid
+                            // nothing else to do any more, reached end of string, this can't be valid
                             // since there was no valid end to this control sequence.
                             break 'control_sequence_loop;
                         }

@@ -31,6 +31,19 @@
 //!
 //! Refer to the [`parser`]'s module documentation for more details.
 //!
+//! ## Explaining ansi-control-codes
+//!
+//! The module [`explain`] contains additional functionality to explain ansi-control-codes. Enable this module to get
+//! the additional functions [`short_name`][explain::Explain::short_name], [`long_name`][explain::Explain::long_name],
+//! [`short_description`][explain::Explain::short_description], [`long_description`][explain::Explain::long_description]
+//! to inspect and explain control functions.
+//!
+//! ```text
+//! cargo add ansi-control-codes --features explain
+//! ```
+//!
+//! Refer to the [`explain`]'s module documentation for more details.
+//!
 //! ## Low-Level Control Functions
 //!
 //! The control functions of this library are sorted into several modules. You will find the low-level control functions
@@ -129,7 +142,7 @@ macro_rules! ascii {
     };
 }
 
-/// Possible errors when specifying a custom control funciton.
+/// Possible errors when specifying a custom control function.
 ///
 /// It is possible to define custom control functions, so called private-use or experimental functions.
 /// These private-use functions still need to follow some rules. If they violate the rules, one of these
@@ -420,6 +433,9 @@ pub mod modes;
 
 #[cfg(feature = "parser")]
 pub mod parser;
+
+#[cfg(feature = "explain")]
+pub mod explain;
 
 #[cfg(test)]
 mod tests {
