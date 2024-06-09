@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.0.1
+
+- Enable documentation of all features in doc.rs
+
 ## Version 1.0.0
 
 - Specified the correct minimum rust compiler version `1.66.1` in `Cargo.toml`

@@ -1,7 +1,7 @@
 [package]
 name = "ansi-control-codes"
 description = "This library contains all ANSI Escape Codes that are defined in the ISO 6429 Standard"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 rust-version = "1.66.1"
 
@@ -21,3 +21,6 @@ readme = "README.md"
 [features]
 parser = []
 explain = []
+
+[package.metadata.docs.rs]
+all-features = true
