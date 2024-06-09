@@ -463,7 +463,7 @@ pub enum Mode {
     /// effectively repeat counts, a `0` parameter value corresponded to a "no-op". In either instance, non-negative
     /// computed numeric parameter values might have been used without treating `0` as a special (unusable) case.
     ///
-    /// Where an explicit parameter value was not used, implementors were urged to omit a parameter value (use an empty
+    /// Where an explicit parameter value was not used, implementers were urged to omit a parameter value (use an empty
     /// parameter sub-string) to imply a default parameter value.
     ///
     /// Control functions affected are: [`CBT`][crate::control_sequences::CBT], [`CHA`][crate::control_sequences::CHA],

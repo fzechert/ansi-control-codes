@@ -112,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        msrv: ["1.62.1"]
+        msrv: ["1.66.1"]
     name: MSRV ubuntu / ${{ matrix.msrv }}
     steps:
       - name: Checkout repository

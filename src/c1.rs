@@ -150,7 +150,7 @@ pub const HTJ: ControlFunction = c1!(04 / 09);
 /// `HTS` causes a character tabulation stop to be set at the active presentation position in the presentation
 /// component.
 ///
-/// The number of liens affected depends on the setting of the TABULATION STOP MODE ([`TSM`][crate::modes::TSM]).
+/// The number of lines affected depends on the setting of the TABULATION STOP MODE ([`TSM`][crate::modes::TSM]).
 pub const HTS: ControlFunction = c1!(04 / 08);
 
 /// Message Waiting.

@@ -53,8 +53,8 @@
 //! |       `06` |   [`JFY`]   |   [`SLL`]   |  [`SRCS`]   |
 //! |       `07` |   [`SPI`]   |   [`FNK`]   |   [`SCS`]   |
 //! |       `08` |  [`QUAD`]   |  [`SPQR`]   |   [`SLS`]   |
-//! |       `09` |   [`SSU`]   |   [`SEF`]   |     --      |
-//! |       `10` |   [`PFS`]   |   [`PEC`]   |     --      |
+//! |       `09` |   [`SSU`]   |   [`SEF`]   |   [`SPH`]   |
+//! |       `10` |   [`PFS`]   |   [`PEC`]   |   [`SPL`]   |
 //! |       `11` |   [`SHS`]   |   [`SSW`]   |   [`SCP`]   |
 //! |       `12` |   [`SVS`]   |  [`SACS`]   |     --      |
 //! |       `13` |   [`IGS`]   |  [`SAPV`]   |     --      |
@@ -318,10 +318,11 @@ pub fn CVT(n: Option<u32>) -> ControlFunction<'static> {
 
 /// Valid parameter values to the function [`DA`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[repr(u32)]
 pub enum DeviceAttributes {
     /// Request identifying device attributes from a device.
     #[default]
-    Request,
+    Request = 0,
 
     /// Device attributes identification code.
     Identify(u32),
@@ -848,7 +849,7 @@ pub fn HVP(n: Option<u32>, m: Option<u32>) -> ControlFunction<'static> {
 /// the data component. The previous contents of the active data position and and adjacent string of character positions
 /// are shifted away from the active data position. The contents of `n` character positions at the other end of the
 /// shifted part are removed. The active data position is moved to the line home position in the active line. The line
-/// home position is/ established by the parameter value of SET LINE HOME ([`SLH`]).
+/// home position is established by the parameter value of SET LINE HOME ([`SLH`]).
 ///
 /// The default value for `n` is `1`.
 pub fn ICH(n: Option<u32>) -> ControlFunction<'static> {
@@ -857,9 +858,10 @@ pub fn ICH(n: Option<u32>) -> ControlFunction<'static> {
 
 /// Valid parameter values to the function [`IDCS`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u32)]
 pub enum IdentifyDeviceControlString {
     /// Reserved for use with the DIAGNOSTIC state of the STATUS REPORT TRANSFER MODE.
-    Diagnostic,
+    Diagnostic = 0,
 
     /// Reserved for Dynamically Redefinable Character Sets according to Standard [ECMA-35][ecma-35].
     ///
@@ -1385,7 +1387,7 @@ pub enum PresentationVariant {
     /// are presented in the form they are stored (pass-through).
     NoContextualShapeArabicScript,
 
-    /// Contextual shape determination of Arabic scripts i not used, the graphic characters - excluding the digits -
+    /// Contextual shape determination of Arabic scripts is not used, the graphic characters - excluding the digits -
     /// are presented in the form they are stored (pass-through).
     NoContextualShapeArabicScriptExceptDigits,
 
@@ -1602,7 +1604,7 @@ pub enum EditingExtend {
 
 /// Select Editing Extent.
 ///
-/// `SEE` is used to establish the editing extent for subsequent character or line line insertion or deletion. The
+/// `SEE` is used to establish the editing extent for subsequent character or line insertion or deletion. The
 /// established extent remains in effect until the next occurrence of `SEE` in the data stream. The editing extend
 /// depends on the parameter value.
 ///
@@ -1613,10 +1615,11 @@ pub fn SEE(s: Option<EditingExtend>) -> ControlFunction<'static> {
 
 /// Valid parameter values to the function [`SEF`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[repr(u32)]
 pub enum Load {
     /// Eject sheet, no new sheet loaded
     #[default]
-    None,
+    None = 0,
 
     /// Eject sheet and load another from the given bin.
     Bin(u32),
@@ -1624,10 +1627,11 @@ pub enum Load {
 
 /// Valid parameter values to the function [`SEF`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[repr(u32)]
 pub enum Stack {
     /// Eject sheet, no stacker specified.
     #[default]
-    None,
+    None = 0,
 
     /// Eject sheet into the specified stacker.
     Stacker(u32),
@@ -2285,7 +2289,7 @@ pub fn STAB(s: u32) -> ControlFunction<'static> {
 /// Scroll Up.
 ///
 /// `SU` causes the data in the presentation component to be moved by `n` line positions if the line operation is
-/// horizontal, or by `n` character positions if the line orientation is vertical, such that the dat data appear to move
+/// horizontal, or by `n` character positions if the line orientation is vertical, such that the data appear to move
 /// up.
 ///
 /// The active presentation position is not affected by this control function.
